@@ -47,6 +47,10 @@ io.sockets.on( 'connection', function( socket ) {
 	socket.emit( 'cwd', process.cwd() );
 
 	socket.on( 'cd', function( cwd, data ) {
+		if (typeof data === 'undefined') { 
+			cwd = process.cwd();
+			data = '';
+		}
 		var result = path.join( cwd, data );
 		fs.exists( result, function( exist ) {
 			if (exist) {

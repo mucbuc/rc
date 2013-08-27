@@ -4,13 +4,14 @@ function MainCtrl( $scope )
 	$scope.output = ''; 
 	$scope.command = ''; 
 	$scope.cwd = '';
-	$scope.title = '';
-
+	
 	$scope.evaluate = function( command ) { 
 		
 		var cm = command;
-
-		if (cm.indexOf( 'cd ') == 0) {
+		if (cm == 'cd') {
+			$scope.socket.emit( 'cd' ); 
+		}
+		else if (cm.indexOf( 'cd ') == 0) {
 			$scope.socket.emit( 'cd', $scope.cwd, cm.substr( 3 ) ); 
 		}
 		else {
@@ -35,7 +36,6 @@ function MainCtrl( $scope )
 		console.log( 'got path' + data );
 
 		$scope.cwd = data;
-		$scope.title = $scope.cwd;
 		$scope.$apply();
 	} );
 
