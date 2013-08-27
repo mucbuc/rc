@@ -40,7 +40,6 @@ server = http.createServer(app);
 
 io = socketio.listen( server );
 
-
 io.sockets.on( 'connection', function( socket ) {
 
 	console.log( 'got connection' );
@@ -48,7 +47,6 @@ io.sockets.on( 'connection', function( socket ) {
 	socket.emit( 'cwd', process.cwd() );
 
 	socket.on( 'cd', function( cwd, data ) {
-
 		var result = path.join( cwd, data );
 		fs.exists( result, function( exist ) {
 			if (exist) {
@@ -56,25 +54,40 @@ io.sockets.on( 'connection', function( socket ) {
 			}
 			else {
 				socket.emit( 'feedback', 'not changed dir' );
-			} 
+			}
 		} );
 	} );
 
+	socket.once( 'evaluate', execute );
 
-	socket.on( 'evaluate', function( cwd, data ) {
+	function execute( cwd, data ) {
 		var p;
-		
 		console.log( data );
 		socket.emit( 'feedback', 'execute: ' + data + '\n' );
 
-		p = exec( data, function( code, signal, cwd ) {
+		p = exec( data, function( code, signal ) {
 			//socket.emit( 'feedback', code ? 'err:' + code : 'ok');			
-		} );
+			socket.emit( 'exit', code, signal );
+			socket.removeListener( 'evaluate', write );
+			socket.once( 'evaluate', execute );
+		}, cwd );
 		
 		p.stdout.on( 'data', function( data ) { 
 			socket.emit( 'feedback', data ); 
 		} );
-	} );
+
+		socket.on( 'kill', function() {
+			p.kill();
+			socket.removeListener( 'evaluate', write );
+		} );
+
+		socket.on( 'evaluate', write );
+		
+		function write( cwd, data ) {
+			p.stdin.write( data );
+		}
+ 	}
+
 } );
 
 

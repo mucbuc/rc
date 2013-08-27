@@ -7,8 +7,8 @@ html(ng-app)
     link(rel='stylesheet', href='/stylesheets/style.css')
 body 
     div(ng-controller="MainCtrl")
-        block content
-        {{output}}
-        form(name='commandForm', ng-submit='evaluate(command)')
-            input(ng-model='command', name='command')
-            
+        pre {{output}}
+        {{cwd}}
+        form(ng-submit='evaluate(command)')
+            input(ng-model='command', id='command')
+        button(ng-click='kill()') kill  

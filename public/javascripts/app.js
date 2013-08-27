@@ -14,9 +14,16 @@ function MainCtrl( $scope )
 			$scope.socket.emit( 'cd', $scope.cwd, cm.substr( 3 ) ); 
 		}
 		else {
+			var com = document.getElementById( 'command' );
+			com.disabled = true;
+
 			$scope.socket.emit( 'evaluate', $scope.cwd, cm );
 		}
 		$scope.command = '';
+		$scope.kill = function() {
+			$scope.socket.emit( 'kill' );
+			console.log( 'kill' );
+		};
 	};
 
 	$scope.socket.on( 'feedback', function( data ) {
@@ -25,10 +32,27 @@ function MainCtrl( $scope )
 	} );
 
 	$scope.socket.on( 'cwd', function( data ) {
-		console.log( 'got path' );
+		console.log( 'got path' + data );
 
 		$scope.cwd = data;
 		$scope.title = $scope.cwd;
 		$scope.$apply();
 	} );
+
+	$scope.socket.on( 'exit', function( code, signal ) {
+		var com = document.getElementById( 'command' );
+		com.disabled = false;
+		com.scrollIntoView();
+		if (!code) {
+			$scope.output += 'ok\n';
+		}
+		else {
+			$scope.output += code + '\n';
+			$scope.output += signal + '\n';
+		}
+		$scope.$apply();
+		$scope.kill = function() {};
+	} );
+
+	$scope.kill = function() {};
 }
