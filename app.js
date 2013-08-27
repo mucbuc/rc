@@ -9,7 +9,7 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , exec = require( 'jsthree' ).exec
+  , exec = require( 'mucbuc-jsthree' ).exec
   , socketio = require( 'socket.io' )
   , fs = require( 'fs' )
   , io
