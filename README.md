@@ -1,0 +1,4 @@
+rc
+==
+
+remote console
