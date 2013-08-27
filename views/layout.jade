@@ -1,0 +1,14 @@
+doctype 5
+html(ng-app)
+  head
+    script(src='/socket.io/socket.io.js')
+    script(src='/javascripts/angular.min.js') 
+    script(src='/javascripts/app.js') 
+    link(rel='stylesheet', href='/stylesheets/style.css')
+body 
+    div(ng-controller="MainCtrl")
+        block content
+        {{output}}
+        form(name='commandForm', ng-submit='evaluate(command)')
+            input(ng-model='command', name='command')
+            
