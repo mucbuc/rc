@@ -1,45 +1,48 @@
 function MainCtrl( $scope )
 {
-	$scope.socket = io.connect();
-	$scope.output = ''; 
-	$scope.command = ''; 
-	$scope.cwd = '';
-	
+	var socket = io.connect();
+
+	$scope.pathList = [ "hey", "you" ];
+
 	$scope.evaluate = function( command ) { 
 		
 		var cm = command;
 		if (cm == 'cd') {
-			$scope.socket.emit( 'cd' ); 
+			socket.emit( 'cd' ); 
 		}
 		else if (cm.indexOf( 'cd ') == 0) {
-			$scope.socket.emit( 'cd', $scope.cwd, cm.substr( 3 ) ); 
+			socket.emit( 'cd', $scope.cwd, cm.substr( 3 ) ); 
 		}
 		else {
 			var com = document.getElementById( 'command' );
 			com.disabled = true;
 
-			$scope.socket.emit( 'evaluate', $scope.cwd, cm );
+			socket.emit( 'evaluate', $scope.cwd, cm );
 		}
 		$scope.command = '';
 		$scope.kill = function() {
-			$scope.socket.emit( 'kill' );
+			socket.emit( 'kill' );
 			console.log( 'kill' );
 		};
 	};
 
-	$scope.socket.on( 'feedback', function( data ) {
+	socket.on( 'feedback', function( data ) {
 		$scope.output += data;
 		$scope.$apply();
 	} );
 
-	$scope.socket.on( 'cwd', function( data ) {
+	socket.on( 'cwd', function( data ) {
 		console.log( 'got path' + data );
-
 		$scope.cwd = data;
 		$scope.$apply();
 	} );
 
-	$scope.socket.on( 'exit', function( code, signal ) {
+	socket.on( 'ls', function( data ) { 
+		$scope.pathList = data;
+		$scope.$apply();
+	} ); 
+
+	socket.on( 'exit', function( code, signal ) {
 		var com = document.getElementById( 'command' );
 		com.disabled = false;
 		com.scrollIntoView();
@@ -55,4 +58,9 @@ function MainCtrl( $scope )
 	} );
 
 	$scope.kill = function() {};
+
+	$scope.socket = socket;
+	$scope.output = ''; 
+	$scope.command = ''; 
+	$scope.cwd = '';
 }

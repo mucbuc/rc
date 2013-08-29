@@ -9,11 +9,13 @@ var express = require('express')
   , user = require('./routes/user')
   , http = require('http')
   , path = require('path')
-  , exec = require( 'mucbuc-jsthree' ).exec
+  , js3 = require( 'mucbuc-jsthree' )
   , socketio = require( 'socket.io' )
   , fs = require( 'fs' )
   , io
-  , server;
+  , server
+  , exec = js3.exec
+  , walk = js3.walk;
 
 var app = express();
 
@@ -42,19 +44,41 @@ io = socketio.listen( server );
 
 io.sockets.on( 'connection', function( socket ) {
 
-	console.log( 'got connection' );
+	var cwd = process.cwd();
 
-	socket.emit( 'cwd', process.cwd() );
+	socket.emit( 'cwd', cwd );
+
+	send_ls();
+
+	function send_ls() {
+
+		var pathList = [];
+
+		walk( cwd, onDone, onDir, onFile ); 
+
+		function onDir( path, dec ) {
+			pathList.push( path );
+			dec();
+		}
+
+		function onFile( path ) {
+			pathList.push( path );
+		}
+
+		function onDone() {
+			socket.emit( 'ls', pathList );
+		}
+	}
 
 	socket.on( 'cd', function( cwd, data ) {
 		if (typeof data === 'undefined') { 
-			cwd = process.cwd();
 			data = '';
 		}
 		var result = path.join( cwd, data );
 		fs.exists( result, function( exist ) {
 			if (exist) {
 				socket.emit( 'cwd', result );
+				send_ls();
 			}
 			else {
 				socket.emit( 'feedback', 'not changed dir' );
