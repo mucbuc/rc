@@ -80,6 +80,11 @@ io.sockets.on( 'connection', function( socket ) {
 			console.log( err );
 		}
 
+		function onError( error ) {
+			console.log( error );
+			socket.emit( 'err', error );
+		}
+
 		function onDir( dir, dec ) {
 			pathList.push( path.basename( dir ) );
 			dec();
