@@ -2,7 +2,14 @@ function MainCtrl( $scope )
 {
 	var socket = io.connect();
 
-	$scope.pathList = [ "hey", "you" ];
+	$scope.pathList = [];
+
+	$scope.appendPath = function( path ) {
+		var com = document.getElementById( 'command' );
+		com.focus();
+		$scope.command += ' ' + path + ' ';
+		$scope.path = '';
+	}; 
 
 	$scope.evaluate = function( command ) { 
 		
@@ -11,13 +18,13 @@ function MainCtrl( $scope )
 			socket.emit( 'cd' ); 
 		}
 		else if (cm.indexOf( 'cd ') == 0) {
-			socket.emit( 'cd', $scope.cwd, cm.substr( 3 ) ); 
+			socket.emit( 'cd', $scope.cwd, cm.substr( 3 ).trim() ); 
 		}
 		else {
 			var com = document.getElementById( 'command' );
 			com.disabled = true;
 
-			socket.emit( 'evaluate', $scope.cwd, cm );
+			socket.emit( 'evaluate', $scope.cwd, cm.trim() );
 		}
 		$scope.command = '';
 		$scope.kill = function() {
@@ -39,6 +46,7 @@ function MainCtrl( $scope )
 
 	socket.on( 'ls', function( data ) { 
 		$scope.pathList = data;
+		$scope.pathList.push( '..' );
 		$scope.$apply();
 	} ); 
 
@@ -63,4 +71,5 @@ function MainCtrl( $scope )
 	$scope.output = ''; 
 	$scope.command = ''; 
 	$scope.cwd = '';
+	$scope.path = '';
 }

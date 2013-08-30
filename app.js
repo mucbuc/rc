@@ -48,37 +48,18 @@ io.sockets.on( 'connection', function( socket ) {
 
 	socket.emit( 'cwd', cwd );
 
-	send_ls();
-
-	function send_ls() {
-
-		var pathList = [];
-
-		walk( cwd, onDone, onDir, onFile ); 
-
-		function onDir( path, dec ) {
-			pathList.push( path );
-			dec();
-		}
-
-		function onFile( path ) {
-			pathList.push( path );
-		}
-
-		function onDone() {
-			socket.emit( 'ls', pathList );
-		}
-	}
+	sendList( cwd );
 
 	socket.on( 'cd', function( cwd, data ) {
-		if (typeof data === 'undefined') { 
+		if (typeof cwd === 'undefined') { 
+			cwd = process.cwd();
 			data = '';
 		}
 		var result = path.join( cwd, data );
 		fs.exists( result, function( exist ) {
 			if (exist) {
 				socket.emit( 'cwd', result );
-				send_ls();
+				sendList( result );
 			}
 			else {
 				socket.emit( 'feedback', 'not changed dir' );
@@ -88,13 +69,32 @@ io.sockets.on( 'connection', function( socket ) {
 
 	socket.once( 'evaluate', execute );
 
+	function sendList( dir ) {
+
+		var pathList = [];
+
+		walk( dir, onDone, onDir, onFile ); 
+
+		function onDir( dir, dec ) {
+			pathList.push( path.basename( dir ) );
+			dec();
+		}
+
+		function onFile( dir ) {
+			pathList.push( path.basename( dir ) );
+		}
+
+		function onDone() {
+			socket.emit( 'ls', pathList );
+		}
+	}
+
 	function execute( cwd, data ) {
 		var p;
 		console.log( data );
 		socket.emit( 'feedback', 'execute: ' + data + '\n' );
 
 		p = exec( data, function( code, signal ) {
-			//socket.emit( 'feedback', code ? 'err:' + code : 'ok');			
 			socket.emit( 'exit', code, signal );
 			socket.removeListener( 'evaluate', write );
 			socket.once( 'evaluate', execute );
