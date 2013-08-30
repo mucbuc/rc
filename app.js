@@ -74,7 +74,7 @@ io.sockets.on( 'connection', function( socket ) {
 		var pathList = [];
 
 		try {
-			walk( dir, onDone, onDir, onFile ); 
+			walk( dir, onDone, onDir, onFile, onError ); 
 		} 
 		catch( err ) {
 			console.log( err );
