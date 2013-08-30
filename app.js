@@ -73,7 +73,12 @@ io.sockets.on( 'connection', function( socket ) {
 
 		var pathList = [];
 
-		walk( dir, onDone, onDir, onFile ); 
+		try {
+			walk( dir, onDone, onDir, onFile ); 
+		} 
+		catch( err ) {
+			console.log( err );
+		}
 
 		function onDir( dir, dec ) {
 			pathList.push( path.basename( dir ) );
