@@ -4,7 +4,8 @@ function MainCtrl( $scope )
 	  , emitter = new EventStream()
 	  , cl = new CommandLine( document.getElementById( 'command' ), emitter )
 	  , history = []
-	  , searchIndex = 0;
+	  , searchIndex = 0
+	  , autoIndex = 0;
 	
 	$scope.kill = function() {};
 
@@ -13,6 +14,7 @@ function MainCtrl( $scope )
 	$scope.command = ''; 
 	$scope.cwd = '';
 	$scope.path = '';
+	$scope.pathList = [];
 
 	// need to test these 
 	emitter.on( 'auto', function( command ) { console.log( 'auto:', command ); } );
@@ -27,7 +29,6 @@ function MainCtrl( $scope )
 		searchIndex = 0;
 	});
 
-
 	emitter.on( 'previous', function() {
 		if (searchIndex < history.length) {
 			applyHistory( ++searchIndex );
@@ -40,9 +41,23 @@ function MainCtrl( $scope )
 		}
 	} );
 
+	emitter.on( 'auto', function( command ) {
+		var ind = command.lastIndexOf( ' ' );
+
+		if (ind == -1) {
+			applyAuto( ++autoIndex );
+		}
+	} );
+
 	function tick() {
 		emitter.tick();
 		setTimeout( tick, 100 );
+	}
+
+	function applyAuto( index ) {
+		$scope.command = $scope.command.substr( 0, - $scope.command.lastIndexOf( ' ' ) );
+		$scope.command += $scope.pathList[ index ];
+		$scope.$apply();
 	}
 
 	function applyHistory( index ) {
@@ -50,8 +65,6 @@ function MainCtrl( $scope )
 		$scope.$apply();
 	}
 
-	$scope.pathList = [];
-	
 	$scope.appendPath = function( path ) {
 		var com = document.getElementById( 'command' );
 		com.focus();
