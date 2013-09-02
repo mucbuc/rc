@@ -4,6 +4,15 @@ function MainCtrl( $scope )
 	  , emitter = new EventStream()
 	  , cl = new CommandLine( document.getElementById( 'command' ), emitter );
 	
+	$scope.kill = function() {};
+
+	$scope.socket = socket;
+	$scope.output = ''; 
+	$scope.command = ''; 
+	$scope.cwd = '';
+	$scope.path = '';
+	$scope.history = [];
+
 	// need to test these 
 	emitter.on( 'auto', function( command ) { console.log( 'auto:', command ); } );
 	emitter.on( 'eval', function( command ) { console.log( 'eval:', command ); } );
@@ -11,6 +20,17 @@ function MainCtrl( $scope )
 	emitter.on( 'next', function() { console.log( 'next' ); } );
 
 	tick();
+
+	emitter.on( 'eval', function( command ) {
+		$scope.evaluate(command);
+	});
+
+	emitter.once( 'previous', function() {
+		if ($scope.history.length) {
+			$scope.command = $scope.history[ $scope.history.length - 1 ];
+			$scope.$apply();
+		}
+	} );
 
 	function tick() {
 		emitter.tick();
@@ -41,6 +61,7 @@ function MainCtrl( $scope )
 
 			socket.emit( 'evaluate', $scope.cwd, cm.trim() );
 		}
+		$scope.history.push( $scope.command );
 		$scope.command = '';
 		$scope.kill = function() {
 			socket.emit( 'kill' );
@@ -79,12 +100,4 @@ function MainCtrl( $scope )
 		$scope.$apply();
 		$scope.kill = function() {};
 	} );
-
-	$scope.kill = function() {};
-
-	$scope.socket = socket;
-	$scope.output = ''; 
-	$scope.command = ''; 
-	$scope.cwd = '';
-	$scope.path = '';
 }
