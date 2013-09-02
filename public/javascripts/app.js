@@ -2,7 +2,9 @@ function MainCtrl( $scope )
 {
 	var socket = io.connect()
 	  , emitter = new EventStream()
-	  , cl = new CommandLine( document.getElementById( 'command' ), emitter );
+	  , cl = new CommandLine( document.getElementById( 'command' ), emitter )
+	  , history = []
+	  , searchIndex = 0;
 	
 	$scope.kill = function() {};
 
@@ -11,7 +13,6 @@ function MainCtrl( $scope )
 	$scope.command = ''; 
 	$scope.cwd = '';
 	$scope.path = '';
-	$scope.history = [];
 
 	// need to test these 
 	emitter.on( 'auto', function( command ) { console.log( 'auto:', command ); } );
@@ -23,18 +24,30 @@ function MainCtrl( $scope )
 
 	emitter.on( 'eval', function( command ) {
 		$scope.evaluate(command);
+		searchIndex = 0;
 	});
 
-	emitter.once( 'previous', function() {
-		if ($scope.history.length) {
-			$scope.command = $scope.history[ $scope.history.length - 1 ];
-			$scope.$apply();
+
+	emitter.on( 'previous', function() {
+		if (searchIndex < history.length) {
+			applyHistory( ++searchIndex );
+		}
+	} );
+
+	emitter.on( 'next', function() {
+		if (searchIndex > 0) {
+			applyHistory( --searchIndex ); 
 		}
 	} );
 
 	function tick() {
 		emitter.tick();
-		setTimeout( tick, 1000 );
+		setTimeout( tick, 100 );
+	}
+
+	function applyHistory( index ) {
+		$scope.command = history[ history.length - index ];
+		$scope.$apply();
 	}
 
 	$scope.pathList = [];
@@ -61,7 +74,7 @@ function MainCtrl( $scope )
 
 			socket.emit( 'evaluate', $scope.cwd, cm.trim() );
 		}
-		$scope.history.push( $scope.command );
+		history.push( $scope.command );
 		$scope.command = '';
 		$scope.kill = function() {
 			socket.emit( 'kill' );
