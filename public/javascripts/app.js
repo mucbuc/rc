@@ -1,9 +1,24 @@
 function MainCtrl( $scope )
 {
-	var socket = io.connect();
+	var socket = io.connect()
+	  , emitter = new EventStream()
+	  , cl = new CommandLine( document.getElementById( 'command' ), emitter );
+	
+	// need to test these 
+	emitter.on( 'auto', function( command ) { console.log( 'auto:', command ); } );
+	emitter.on( 'eval', function( command ) { console.log( 'eval:', command ); } );
+	emitter.on( 'previous', function() { console.log( 'previous' ); } );
+	emitter.on( 'next', function() { console.log( 'next' ); } );
+
+	tick();
+
+	function tick() {
+		emitter.tick();
+		setTimeout( tick, 1000 );
+	}
 
 	$scope.pathList = [];
-
+	
 	$scope.appendPath = function( path ) {
 		var com = document.getElementById( 'command' );
 		com.focus();
@@ -22,7 +37,7 @@ function MainCtrl( $scope )
 		}
 		else {
 			var com = document.getElementById( 'command' );
-			com.disabled = true;
+			//com.disabled = true;
 
 			socket.emit( 'evaluate', $scope.cwd, cm.trim() );
 		}

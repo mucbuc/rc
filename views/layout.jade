@@ -1,10 +1,16 @@
 doctype 5
 html(ng-app)
   head
-    script(src='/socket.io/socket.io.js')
-    script(src='/javascripts/angular.min.js') 
-    script(src='/javascripts/app.js') 
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    script
+        var exports = window;
+    script(src='socket.io/socket.io.js')
+    script(src='public/javascripts/angular.min.js') 
+    script(src='node_modules/mucbuc-jsbag/lib/set.js')
+    script(src='node_modules/mucbuc-jsbag/lib/eventstream.js')
+    script(src='node_modules/command-line/node_modules/keyboard/keyboard.js')
+    script(src='node_modules/command-line/lib/cle.js')
+    script(src='public/javascripts/app.js') 
+    link(rel='stylesheet', href='public/stylesheets/style.css')
 body 
     div(ng-controller="MainCtrl")
         pre {{output}}
