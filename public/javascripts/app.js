@@ -22,6 +22,10 @@ function MainCtrl( $scope )
 	emitter.on( 'previous', function() { console.log( 'previous' ); } );
 	emitter.on( 'next', function() { console.log( 'next' ); } );
 
+	cl.on( 'Ctrl+c', function() { 
+		$scope.kill();
+	} );
+
 	tick();
 
 	emitter.on( 'eval', function( command ) {

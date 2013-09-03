@@ -18,8 +18,6 @@ body
             span {{cwd}}
             form(ng-submit='evaluate(command)')
                input(ng-model='command', id='command', size = '65%', autocomplete='off')
-            select(ng-model='path' ng-options='path for path in pathList', ng-change='appendPath(path)' )
-            button(ng-click='kill()') kill
         
                 
         
