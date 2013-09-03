@@ -27,6 +27,7 @@ function MainCtrl( $scope )
 	emitter.on( 'eval', function( command ) {
 		$scope.evaluate(command);
 		searchIndex = 0;
+		autoIndex = 0;
 	});
 
 	emitter.on( 'previous', function() {
@@ -43,9 +44,9 @@ function MainCtrl( $scope )
 
 	emitter.on( 'auto', function( command ) {
 		var ind = command.lastIndexOf( ' ' );
-
-		if (ind == -1) {
-			applyAuto( ++autoIndex );
+		if (ind != -1) {
+			var pre = command.substr( 0, ind );
+			applyAuto( ++autoIndex, pre );
 		}
 	} );
 
@@ -54,9 +55,9 @@ function MainCtrl( $scope )
 		setTimeout( tick, 100 );
 	}
 
-	function applyAuto( index ) {
-		$scope.command = $scope.command.substr( 0, - $scope.command.lastIndexOf( ' ' ) );
-		$scope.command += $scope.pathList[ index ];
+	function applyAuto( index, command ) {
+		console.log( command );
+		$scope.command = command + ' ' + $scope.pathList[ index ];
 		$scope.$apply();
 	}
 
