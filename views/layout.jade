@@ -14,8 +14,8 @@ html(ng-app)
 body 
     div(ng-controller="MainCtrl")
         pre {{output}}
-        label 
-            span {{cwd}}
+        div
+            {{cwd}}
             form(ng-submit='evaluate(command)')
                input(ng-model='command', id='command', size = '65%', autocomplete='off')
         

@@ -5,7 +5,8 @@ function MainCtrl( $scope )
 	  , cl = new CommandLine( document.getElementById( 'command' ), emitter )
 	  , history = []
 	  , searchIndex = 0
-	  , autoIndex = 0;
+	  , autoComplete
+	  , pathList = [];
 	
 	$scope.kill = function() {};
 
@@ -14,8 +15,7 @@ function MainCtrl( $scope )
 	$scope.command = ''; 
 	$scope.cwd = '';
 	$scope.path = '';
-	$scope.pathList = [];
-
+	
 	// need to test these 
 	emitter.on( 'auto', function( command ) { console.log( 'auto:', command ); } );
 	emitter.on( 'eval', function( command ) { console.log( 'eval:', command ); } );
@@ -31,7 +31,7 @@ function MainCtrl( $scope )
 	emitter.on( 'eval', function( command ) {
 		$scope.evaluate(command);
 		searchIndex = 0;
-		autoIndex = 0;
+		autoComplete = 0;
 	});
 
 	emitter.on( 'previous', function() {
@@ -48,10 +48,35 @@ function MainCtrl( $scope )
 
 	emitter.on( 'auto', function( command ) {
 		var ind = command.lastIndexOf( ' ' );
-		if (ind != -1) {
-			var pre = command.substr( 0, ind );
-			applyAuto( ++autoIndex, pre );
+		if (!autoComplete) {
+
+			var accept = []
+			  , end = ind == -1 ? command : command.substr( ind + 1 );
+
+			pathList.forEach( function( e ) {
+				var matchAt = e.indexOf( end );
+				if (matchAt != -1) {
+				  accept.push( e );
+				  console.log( 'match for', e, end );
+				}
+				else 
+					console.log( 'no match', e, end );
+			} ); 
+
+			autoComplete = { 
+				index: 0,
+				options: accept,
+			};
 		}
+
+	  	if (ind != -1) {
+			var pre = command.substr( 0, ind );
+			applyAuto( autoComplete.index, pre );
+		}
+		else {
+			applyAuto( autoComplete.index, command );
+		}
+		++autoComplete.index;
 	} );
 
 	function tick() {
@@ -61,7 +86,7 @@ function MainCtrl( $scope )
 
 	function applyAuto( index, command ) {
 		console.log( command );
-		$scope.command = command + ' ' + $scope.pathList[ index ];
+		$scope.command = command + ' ' + autoComplete.options[autoComplete.index];
 		$scope.$apply();
 	}
 
@@ -112,9 +137,7 @@ function MainCtrl( $scope )
 	} );
 
 	socket.on( 'ls', function( data ) { 
-		$scope.pathList = data;
-		$scope.pathList.push( '..' );
-		$scope.$apply();
+		pathList = data;
 	} ); 
 
 	socket.on( 'exit', function( code, signal ) {
