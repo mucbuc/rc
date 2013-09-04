@@ -15,7 +15,9 @@ var express = require('express')
   , io
   , server
   , exec = js3.exec
-  , walk = js3.walk;
+  , walk = js3.walk
+  , os = require( 'os' )
+  , localIP = ''; 
 
 var app = express();
 
@@ -46,8 +48,9 @@ io.sockets.on( 'connection', function( socket ) {
 
 	var cwd = process.cwd();
 
-	socket.emit( 'cwd', cwd );
+	sendLocalIP();
 
+	socket.emit( 'cwd', cwd );
 	sendList( cwd );
 
 	socket.on( 'cd', function( cwd, data ) {
@@ -101,9 +104,7 @@ io.sockets.on( 'connection', function( socket ) {
 
 	function execute( cwd, data ) {
 		var p;
-		console.log( data );
-		socket.emit( 'feedback', 'execute: ' + data + '\n' );
-
+		
 		p = exec( data, function( code, signal ) {
 			socket.emit( 'exit', code, signal );
 			socket.removeListener( 'evaluate', write );
@@ -127,9 +128,28 @@ io.sockets.on( 'connection', function( socket ) {
 		}
  	}
 
+ 	function sendLocalIP() {
+ 		socket.emit( 'ip', localIP );
+ 	}
 } );
-
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
+
+getLocalIP(); 
+
+function getLocalIP() {
+	var interfaces = os.networkInterfaces();  
+	for( var iface in interfaces) {
+		interfaces[ iface ].forEach( function( details ) { 
+			if (details.family=='IPv4') {
+				var address = details.address;
+				if (address != '127.0.0.1') {
+					localIP = address;	
+				}
+			}
+		} );
+	}
+}
+

@@ -6,16 +6,17 @@ function MainCtrl( $scope )
 	  , history = []
 	  , searchIndex = 0
 	  , autoComplete
-	  , pathList = [];
+	  , pathList = []
+	  , serverIP = ''
+	  , cwd = ''; 
 	
 	$scope.kill = function() {};
 
 	$scope.socket = socket;
 	$scope.output = ''; 
 	$scope.command = ''; 
-	$scope.cwd = '';
-	$scope.path = '';
-	
+	$scope.address = '';
+
 	// need to test these 
 	emitter.on( 'auto', function( command ) { console.log( 'auto:', command ); } );
 	emitter.on( 'eval', function( command ) { console.log( 'eval:', command ); } );
@@ -107,31 +108,39 @@ function MainCtrl( $scope )
 			socket.emit( 'cd' ); 
 		}
 		else if (cm.indexOf( 'cd ') == 0) {
-			socket.emit( 'cd', $scope.cwd, cm.substr( 3 ).trim() ); 
+			socket.emit( 'cd', cwd, cm.substr( 3 ).trim() ); 
 		}
 		else {
 			var com = document.getElementById( 'command' );
-			//com.disabled = true;
-
-			socket.emit( 'evaluate', $scope.cwd, cm.trim() );
+			socket.emit( 'evaluate', cwd, cm.trim() );
 		}
+		$scope.output += $scope.address + '$' + ' ' + $scope.command + '\n';
 		history.push( $scope.command );
 		$scope.command = '';
+		
 		$scope.kill = function() {
 			socket.emit( 'kill' );
 			console.log( 'kill' );
 		};
+
+		$scope.$apply();
 	};
 
-	socket.on( 'feedback', function( data ) {
-		$scope.output += data;
-		$scope.$apply();
+	socket.on( 'ip', function( IP ) {
+		serverIP = IP;
 	} );
 
-	socket.on( 'cwd', function( data ) {
-		console.log( 'got path' + data );
-		$scope.cwd = data;
+	socket.on( 'feedback', function (data) {
+		$scope.output += data;
 		$scope.$apply();
+		allign();
+	} );
+
+	socket.on( 'cwd', function (data) {
+		cwd = data;
+		$scope.address = serverIP + cwd;
+		$scope.$apply();
+		allign();
 	} );
 
 	socket.on( 'ls', function( data ) { 
@@ -139,17 +148,21 @@ function MainCtrl( $scope )
 	} ); 
 
 	socket.on( 'exit', function( code, signal ) {
-		var com = document.getElementById( 'command' );
-		com.disabled = false;
-		com.scrollIntoView();
-		if (!code) {
-			$scope.output += 'ok\n';
+		if (code) {
+			$scope.output += $scope.address + ' => ' + 'code: ' + code + '\n';
 		}
-		else {
-			$scope.output += code + '\n';
-			$scope.output += signal + '\n';
+		if (signal) {
+			$scope.output += $scope.address + ' => ' + 'signal: ' + signal + '\n';
 		}
-		$scope.$apply();
 		$scope.kill = function() {};
+		$scope.$apply();
+		allign();
 	} );
+
+	function allign() {
+		var com = document.getElementById( 'command' );
+		com.scrollIntoView();
+	}
+
+	
 }
