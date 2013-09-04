@@ -138,7 +138,7 @@ function MainCtrl( $scope )
 
 	socket.on( 'cwd', function (data) {
 		cwd = data;
-		$scope.address = serverIP + cwd;
+		$scope.address = serverIP + ' ' + cwd;
 		$scope.$apply();
 		allign();
 	} );
