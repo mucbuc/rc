@@ -55,12 +55,9 @@ function MainCtrl( $scope )
 
 			pathList.forEach( function( e ) {
 				var matchAt = e.indexOf( end );
-				if (matchAt != -1) {
+				if (matchAt == 0) {
 				  accept.push( e );
-				  console.log( 'match for', e, end );
 				}
-				else 
-					console.log( 'no match', e, end );
 			} ); 
 
 			autoComplete = { 
@@ -77,6 +74,7 @@ function MainCtrl( $scope )
 			applyAuto( autoComplete.index, command );
 		}
 		++autoComplete.index;
+		autoComplete.index %= autoComplete.options.length;
 	} );
 
 	function tick() {
