@@ -48,31 +48,29 @@ function MainCtrl( $scope )
 	} );
 
 	emitter.on( 'auto', function( command ) {
+		
 		var ind = command.lastIndexOf( ' ' );
-		if (!autoComplete) {
-
+		if (!autoComplete && command.length) {
+			
 			var accept = []
-			  , end = ind == -1 ? command : command.substr( ind + 1 );
-
+			  , end = command.substr( ind + 1 )
+			  , re = new RegExp( '^' + end, "i" );		// case sensitive
+		
 			pathList.forEach( function( e ) {
-				var matchAt = e.indexOf( end );
-				if (matchAt == 0) {
+				if (re.test( e )) {
 				  accept.push( e );
 				}
 			} ); 
 
-			autoComplete = { 
-				index: 0,
-				options: accept,
-			};
+			autoComplete = { index: 0, options: accept };
 		}
 
-	  	if (ind != -1) {
+		if (ind != -1) {
 			var pre = command.substr( 0, ind );
-			applyAuto( autoComplete.index, pre );
+			applyAuto( autoComplete.index, pre + ' ' );
 		}
 		else {
-			applyAuto( autoComplete.index, command );
+			applyAuto( autoComplete.index, '' );
 		}
 		++autoComplete.index;
 		autoComplete.index %= autoComplete.options.length;
@@ -85,7 +83,7 @@ function MainCtrl( $scope )
 
 	function applyAuto( index, command ) {
 		console.log( command );
-		$scope.command = command + ' ' + autoComplete.options[autoComplete.index];
+		$scope.command = command + autoComplete.options[autoComplete.index];
 		$scope.$apply();
 	}
 
@@ -163,6 +161,4 @@ function MainCtrl( $scope )
 		var com = document.getElementById( 'command' );
 		com.scrollIntoView();
 	}
-
-	
 }
