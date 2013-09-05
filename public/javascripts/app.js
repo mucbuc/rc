@@ -117,6 +117,7 @@ function MainCtrl( $scope )
 			socket.emit( 'evaluate', cwd, cm.trim() );
 		}
 		$scope.output += $scope.address + '$' + ' ' + $scope.command + '\n';
+		$scope.output += $scope.address + ' => time: ' + getTime() + '\n';
 		history.push( $scope.command );
 		$scope.command = '';
 		
@@ -151,15 +152,21 @@ function MainCtrl( $scope )
 
 	socket.on( 'exit', function( code, signal ) {
 		if (code) {
-			$scope.output += $scope.address + ' => ' + 'code: ' + code + '\n';
+			$scope.output += $scope.address + ' => code: ' + code + '\n';
 		}
 		if (signal) {
-			$scope.output += $scope.address + ' => ' + 'signal: ' + signal + '\n';
+			$scope.output += $scope.address + ' => signal: ' + signal + '\n';
 		}
+		$scope.output += $scope.address + ' => time: ' + getTime() + '\n';
 		$scope.kill = function() {};
 		$scope.$apply();
 		allign();
 	} );
+
+	function getTime() {
+		var t = new Date();
+		return t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds(); 
+	}
 
 	function allign() {
 		var com = document.getElementById( 'command' );
