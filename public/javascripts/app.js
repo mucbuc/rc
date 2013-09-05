@@ -27,12 +27,16 @@ function MainCtrl( $scope )
 		$scope.kill();
 	} );
 
+	cl.on( 'Backspace', function() {
+		autoComplete = null;
+	} ); 
+
 	tick();
 
 	emitter.on( 'eval', function( command ) {
 		$scope.evaluate(command);
 		searchIndex = 0;
-		autoComplete = 0;
+		autoComplete = null;
 	});
 
 	emitter.on( 'previous', function() {
