@@ -31,6 +31,14 @@ function MainCtrl( $scope )
 		autoComplete = null;
 	} ); 
 
+	document.getElementById( 'command' ).addEventListener( 
+		'textInput', 
+		function() { 
+			searchIndex = 0;
+			autoComplete = null;
+		}
+	); 
+
 	tick();
 
 	emitter.on( 'eval', function( command ) {
