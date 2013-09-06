@@ -53,12 +53,11 @@ function MainCtrl( $scope )
 
 	emitter.on( 'auto', function( command ) {
 		
-		var ind = command.lastIndexOf( ' ' );
 		if (!autoComplete && command.length) {
-			
-			var accept = []
+			var ind = command.lastIndexOf( ' ' )
+			  , accept = []
 			  , end = command.substr( ind + 1 )
-			  , re = new RegExp( '^' + end, "i" );		// case sensitive
+			  , re = new RegExp( '^' + end, "i" );		// case insensitive
 		
 			pathList.forEach( function( e ) {
 				if (re.test( e )) {
@@ -66,18 +65,15 @@ function MainCtrl( $scope )
 				}
 			} ); 
 
-			autoComplete = { index: 0, options: accept };
+			autoComplete = { index: 0, options: accept, position: ind };
 		}
 
-		if (ind != -1) {
-			var pre = command.substr( 0, ind );
+		if (autoComplete) {
+			var pre = command.substr( 0, autoComplete.position );
 			applyAuto( autoComplete.index, pre + ' ' );
+			++autoComplete.index;
+			autoComplete.index %= autoComplete.options.length;
 		}
-		else {
-			applyAuto( autoComplete.index, '' );
-		}
-		++autoComplete.index;
-		autoComplete.index %= autoComplete.options.length;
 	} );
 
 	function tick() {
