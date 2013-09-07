@@ -108,17 +108,22 @@ function MainCtrl( $scope )
 	}; 
 
 	$scope.evaluate = function( command ) { 
-		
-		var cm = command;
-		if (cm == 'cd') {
+		if (command == 'cd') {
 			socket.emit( 'cd' ); 
 		}
-		else if (cm.indexOf( 'cd ') == 0) {
-			socket.emit( 'cd', cwd, cm.substr( 3 ).trim() ); 
+		else if (command.indexOf( 'cd ') == 0) {
+			var arg = command.substr( 3 ).trim();
+			if (	arg[0] == '/' 
+				|| 	arg.indexOf( ':' ) != -1) {
+				socket.emit( 'cd', arg ); 					// absolute
+			}
+			else {
+				socket.emit( 'cd', cwd, arg ); 			// relative
+			}
 		}
 		else {
 			var com = document.getElementById( 'command' );
-			socket.emit( 'evaluate', cwd, cm.trim() );
+			socket.emit( 'evaluate', cwd, command.trim() );
 		}
 		$scope.output += $scope.address + '$' + ' ' + $scope.command + '\n';
 		$scope.output += $scope.address + ' => time: ' + getTime() + '\n';

@@ -55,7 +55,7 @@ io.sockets.on( 'connection', function( socket ) {
 
 	socket.on( 'cd', function( cwd, data ) {
 		
-		var result = getCwd( cwd, data );
+		var result = typeof data == 'undefined' ? cwd : getCwd( cwd, data );
 		fs.exists( result, function( exist ) {
 			if (exist) {
 				socket.emit( 'cwd', result );
