@@ -62,36 +62,67 @@ function MainCtrl( $scope )
 	emitter.on( 'auto', function( command ) {
 		
 		if (!autoComplete && command.length) {
-			var ind = command.lastIndexOf( ' ' )
-			  , accept = []
-			  , end = command.substr( ind + 1 )
-			  , re = new RegExp( '^' + end, "i" );		// case insensitive
-		
-			pathList.forEach( function( e ) {
-				if (re.test( e )) {
-				  accept.push( e );
-				}
-			} ); 
+			autoComplete = initAutoComplete( command );
 
-			autoComplete = { index: 0, options: accept, position: ind };
+			if (autoComplete) {
+				autoComplete.index = autoComplete.options.length - 1;
+			}
 		}
 
 		if (autoComplete) {
-			var pre = command.substr( 0, autoComplete.position );
-			applyAuto( autoComplete.index, pre + ' ' );
 			++autoComplete.index;
 			autoComplete.index %= autoComplete.options.length;
+
+			applyAuto( command );
 		}
 	} );
+
+	emitter.on( 'reverse auto', function( command ) {
+		
+		console.log( 'reverse auto' );
+
+		if (!autoComplete && command.length) {
+			autoComplete = initAutoComplete( command );
+		}
+
+		if (autoComplete) {
+			if (autoComplete.index) {
+				--autoComplete.index;
+			}
+			else {
+				autoComplete.index = autoComplete.options.length - 1;	
+			}
+
+			applyAuto( command );
+		}
+	} );
+
+	function initAutoComplete( command ) {
+
+		var ind = command.lastIndexOf( ' ' )
+		  , accept = []
+		  , end = command.substr( ind + 1 )
+		  , re = new RegExp( '^' + end, "i" );		// case insensitive
+	
+		pathList.forEach( function( e ) {
+			if (re.test( e )) {
+			  accept.push( e );
+			}
+		} ); 
+
+		return { index: 0, options: accept, position: ind };
+	}
 
 	function tick() {
 		emitter.tick();
 		setTimeout( tick, 100 );
 	}
 
-	function applyAuto( index, command ) {
-		console.log( command );
-		$scope.command = command + autoComplete.options[autoComplete.index];
+	function applyAuto( command ) {
+		console.log( 'autoComplete.index', autoComplete.index );
+
+		command = command.substr( 0, autoComplete.position );
+		$scope.command = command + ' ' + autoComplete.options[autoComplete.index];
 		$scope.$apply();
 	}
 
