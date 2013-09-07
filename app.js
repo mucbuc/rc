@@ -54,20 +54,31 @@ io.sockets.on( 'connection', function( socket ) {
 	sendList( cwd );
 
 	socket.on( 'cd', function( cwd, data ) {
-		if (typeof cwd === 'undefined') { 
-			cwd = process.cwd();
-			data = '';
-		}
-		var result = path.join( cwd, data );
+		
+		var result = getCwd( cwd, data );
 		fs.exists( result, function( exist ) {
 			if (exist) {
 				socket.emit( 'cwd', result );
 				sendList( result );
 			}
 			else {
-				socket.emit( 'feedback', 'not changed dir' );
+				socket.emit( 'feedback', 'did not changed dir' );
 			}
 		} );
+
+		function getCwd( cwd, data ) {
+			if (typeof cwd === 'undefined') { 
+				return process.cwd();
+			}
+			else if (data == '/') {
+				return '/';
+			}
+			else if (data == '\\') {
+				return '\\'; 
+			}
+			return path.join( cwd, data );
+		}
+	
 	} );
 
 	socket.once( 'evaluate', execute );

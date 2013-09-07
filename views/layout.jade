@@ -13,11 +13,12 @@ html(ng-app)
     link(rel='stylesheet', href='public/stylesheets/style.css')
 body 
     div(ng-controller="MainCtrl")
-        pre {{output}}
+        details(open)
+            summary() {{address}}
+            pre {{output}}
         div
-            {{address}}
             form(ng-submit='evaluate(command)')
-               input(ng-model='command', id='command', size = '100%', autocomplete='off')
+               textarea(ng-model='command', id='command', size = '100%', autocomplete='off')
         
                 
         
