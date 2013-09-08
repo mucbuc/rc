@@ -41,15 +41,13 @@ app.get('/', routes.index);
 app.get('/users', user.list);
 
 app.post('/', function( req, res ) {
-
 	var files = [];
-	try {
-		req.files.displayImage[0];
+	if (req.files.displayImage instanceof Array) {
 		for (var i = 0; i < req.files.displayImage.length; ++i) {
 			files.push( req.files.displayImage[i] );
 		}
 	}
-	catch(e) {
+	else {
 		files.push( req.files.displayImage );
 	}
 
@@ -57,9 +55,6 @@ app.post('/', function( req, res ) {
 		fs.readFile( file.path, function( err, data ) {
 			var p = path.join( __dirname + '/upload', file.name );
 			fs.writeFile( p, data, function(err) {} );
-			
-
-			//console.log( file.name, data.toString() );
 		} );
 	} );
 
