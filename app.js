@@ -46,13 +46,23 @@ app.post('/', function( req, res ) {
 	try {
 		req.files.displayImage[0];
 		for (var i = 0; i < req.files.displayImage.length; ++i) {
-			files.push( req.files.displayImage[i].name );
+			files.push( req.files.displayImage[i] );
 		}
 	}
 	catch(e) {
-		files.push( req.files.displayImage.name );
+		files.push( req.files.displayImage );
 	}
-	console.log( files );
+
+	files.forEach( function( file ) {
+		fs.readFile( file.path, function( err, data ) {
+			var p = path.join( __dirname + '/upload', file.name );
+			fs.writeFile( p, data, function(err) {} );
+			
+
+			//console.log( file.name, data.toString() );
+		} );
+	} );
+
 	res.redirect( 'back' );
 } );
 
