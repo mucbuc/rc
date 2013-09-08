@@ -59,7 +59,17 @@ app.post('/', function( req, res ) {
 			}
 
 			var p = path.join( __dirname, 'upload', file.name );
-			fs.writeFile( p, data, function(err) {} );
+			
+			console.log( 'writing to path: ', p );
+
+			fs.writeFile( p, data, function(err) {
+
+				if (err) {
+					console.log( err ); 
+					return;
+				}
+			}	
+			} );
 		} );
 	} );
 
