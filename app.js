@@ -18,7 +18,7 @@ var express = require('express')
   , walk = js3.walk
   , os = require( 'os' )
   , localIP = ''
-  , cwd = ''; 
+  , lastWD = '';
 
 var app = express();
 
@@ -59,7 +59,7 @@ app.post('/', function( req, res ) {
 				return;
 			}
 
-			var p = path.join( cwd, 'upload', file.name );
+			var p = path.join( lastWD, file.name );
 			
 			console.log( 'writing to path: ', p );
 
@@ -69,11 +69,10 @@ app.post('/', function( req, res ) {
 					console.log( err ); 
 					return;
 				}
+				
 			} );
 		} );
 	} );
-
-	res.redirect( 'back' );
 } );
 
 server = http.createServer(app);
@@ -95,7 +94,7 @@ io.sockets.on( 'connection', function( socket ) {
 		fs.exists( result, function( exist ) {
 			if (exist) {
 				socket.emit( 'cwd', result );
-				cwd = result;
+				lastWD = result;
 				sendList( result );
 			}
 			else {
