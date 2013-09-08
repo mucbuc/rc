@@ -2,13 +2,24 @@ function MainCtrl( $scope )
 {
 	var socket = io.connect()
 	  , emitter = new EventStream()
-	  , cl = new CommandLine( document.getElementById( 'command' ), emitter )
+	  , element = document.getElementById( 'command' )
+	  , cl = new CommandLine( element, emitter )
 	  , history = []
 	  , searchIndex = 0
 	  , autoComplete
 	  , pathList = []
 	  , serverIP = ''
-	  , cwd = ''; 
+	  , cwd = ''
+	  , selection = document.getElementById( 'fileSelection' )
+	  , button = document.getElementById( 'upload' );
+
+	selection.onchange = function() {
+		selection.form.submit();
+	};
+
+	button.onclick = function() {
+		selection.click();
+	};
 	
 	$scope.kill = function() {};
 
@@ -31,13 +42,16 @@ function MainCtrl( $scope )
 		autoComplete = null;
 	} ); 
 
-	document.getElementById( 'command' ).addEventListener( 
+	element.addEventListener( 
 		'textInput', 
 		function() { 
 			searchIndex = 0;
 			autoComplete = null;
 		}
 	); 
+
+	$scope.print = function() { alert( "hello" ); };
+
 
 	tick();
 

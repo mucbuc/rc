@@ -1,8 +1,7 @@
 doctype 5
 html(ng-app)
   head
-    script
-        var exports = window;
+    script var exports = window;
     script(src='socket.io/socket.io.js')
     script(src='public/javascripts/angular.min.js') 
     script(src='node_modules/mucbuc-jsbag/lib/set.js')
@@ -19,8 +18,10 @@ body
         div
             form(ng-submit='evaluate(command)')
                textarea(ng-model='command', id='command', size = '100%', autocomplete='off')
-        
-                
-        
+            
+            form(action='/', method='POST', enctype='multipart/form-data')
+                input(type='file', multiple='', id='fileSelection', name='displayImage', style='display: none') 
+
+            button(id='upload') upload files    
         
     

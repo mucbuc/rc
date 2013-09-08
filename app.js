@@ -40,6 +40,22 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 
+app.post('/', function( req, res ) {
+
+	var files = [];
+	try {
+		req.files.displayImage[0];
+		for (var i = 0; i < req.files.displayImage.length; ++i) {
+			files.push( req.files.displayImage[i].name );
+		}
+	}
+	catch(e) {
+		files.push( req.files.displayImage.name );
+	}
+	console.log( files );
+	res.redirect( 'back' );
+} );
+
 server = http.createServer(app);
 
 io = socketio.listen( server );
