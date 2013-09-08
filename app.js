@@ -17,7 +17,8 @@ var express = require('express')
   , exec = js3.exec
   , walk = js3.walk
   , os = require( 'os' )
-  , localIP = ''; 
+  , localIP = ''
+  , cwd = ''; 
 
 var app = express();
 
@@ -58,7 +59,7 @@ app.post('/', function( req, res ) {
 				return;
 			}
 
-			var p = path.join( __dirname, 'upload', file.name );
+			var p = path.join( cwd, 'upload', file.name );
 			
 			console.log( 'writing to path: ', p );
 
@@ -94,6 +95,7 @@ io.sockets.on( 'connection', function( socket ) {
 		fs.exists( result, function( exist ) {
 			if (exist) {
 				socket.emit( 'cwd', result );
+				cwd = result;
 				sendList( result );
 			}
 			else {
