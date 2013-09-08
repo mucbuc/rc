@@ -68,7 +68,6 @@ app.post('/', function( req, res ) {
 					console.log( err ); 
 					return;
 				}
-			}	
 			} );
 		} );
 	} );
