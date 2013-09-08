@@ -53,7 +53,7 @@ app.post('/', function( req, res ) {
 
 	files.forEach( function( file ) {
 		fs.readFile( file.path, function( err, data ) {
-			var p = path.join( __dirname + '/upload', file.name );
+			var p = path.join( __dirname, 'upload', file.name );
 			fs.writeFile( p, data, function(err) {} );
 		} );
 	} );
