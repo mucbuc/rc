@@ -64,7 +64,7 @@ io.sockets.on( 'connection', function( socket ) {
 				sendList( result );
 			}
 			else {
-				socket.emit( 'feedback', 'did not changed dir' );
+				socket.emit( 'feedback', 'did not change dir\n' );
 			}
 		} );
 
@@ -98,6 +98,7 @@ io.sockets.on( 'connection', function( socket ) {
 				console.log( 'writing to path: ', p );
 				fs.writeFile( p, data, function(err) {
 					check( err );
+					socket.emit( 'feedback', 'upload complete: ' + p + '\n' ); 
 					sendList( lastWD );
 				} );
 			
