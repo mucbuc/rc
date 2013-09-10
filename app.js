@@ -41,40 +41,6 @@ if ('development' == app.get('env')) {
 app.get('/', routes.index);
 app.get('/users', user.list);
 
-app.post('/', function( req, res ) {
-	var files = [];
-	if (req.files.displayImage instanceof Array) {
-		for (var i = 0; i < req.files.displayImage.length; ++i) {
-			files.push( req.files.displayImage[i] );
-		}
-	}
-	else {
-		files.push( req.files.displayImage );
-	}
-
-	files.forEach( function( file ) {
-		fs.readFile( file.path, function( err, data ) {
-			if (err) {
-				console.log( err ); 
-				return;
-			}
-
-			var p = path.join( lastWD, file.name );
-			
-			console.log( 'writing to path: ', p );
-
-			fs.writeFile( p, data, function(err) {
-
-				if (err) {
-					console.log( err ); 
-					return;
-				}
-				
-			} );
-		} );
-	} );
-} );
-
 server = http.createServer(app);
 
 io = socketio.listen( server );
@@ -118,6 +84,65 @@ io.sockets.on( 'connection', function( socket ) {
 	} );
 
 	socket.once( 'evaluate', execute );
+
+	app.post('/', function( req, res ) {
+
+		var files = getFiles( req );
+
+		files.forEach( function( file ) {
+			fs.readFile( file.path, function( err, data ) {
+
+				check( err );
+
+				var p = path.join( lastWD, file.name );
+				console.log( 'writing to path: ', p );
+				fs.writeFile( p, data, function(err) {
+					check( err );
+					sendList( lastWD );
+				} );
+			
+				function check(err) {
+					if (err) {
+						console.log( err );
+						throw err;
+					}
+				}
+			} );
+		} );
+
+		function processFile( file ) {
+			fs.readFile( file.path, function( err, data ) {
+
+				if (err) {
+					console.log( err ); 
+					return;
+				}
+
+				var p = path.join( lastWD, file.name );
+				console.log( 'writing to path: ', p );
+				fs.writeFile( p, data, function(err) {
+					if (err) {
+						console.log( err ); 
+						return;
+					}
+				} );
+			} );
+		}
+
+		function getFiles( req ) {
+			var result = [];
+			if (req.files.displayImage instanceof Array) {
+				for (var i = 0; i < req.files.displayImage.length; ++i) {
+					result.push( req.files.displayImage[i] );
+				}
+			}
+			else {
+				result.push( req.files.displayImage );
+			}
+			return result;
+		}
+
+	} );
 
 	function sendList( dir ) {
 
