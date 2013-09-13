@@ -21,6 +21,12 @@ function MainCtrl( $scope )
 	
 	$scope.kill = function() {};
 
+	socket.on( 'disconnect', function() {
+		$scope.output += 'connection lost\n';
+		$scope.$apply();		
+	} );
+
+
 	$scope.socket = socket;
 	$scope.output = ''; 
 	$scope.command = ''; 
@@ -44,9 +50,6 @@ function MainCtrl( $scope )
 			autoComplete = null;
 		}
 	); 
-
-	$scope.print = function() { alert( "hello" ); };
-
 
 	tick();
 

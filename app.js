@@ -57,17 +57,21 @@ io.sockets.on( 'connection', function( socket ) {
 
 	socket.on( 'cd', function( cwd, data ) {
 		
-		var result = typeof data == 'undefined' ? cwd : getCwd( cwd, data );
-		fs.exists( result, function( exist ) {
-			if (exist) {
-				socket.emit( 'cwd', result );
-				lastWD = result;
-				sendPathList( result );
-			}
-			else {
-				socket.emit( 'feedback', 'did not change dir\n' );
-			}
-		} );
+		var t = typeof data == 'undefined' ? cwd : getCwd( cwd, data );
+		changeCwd( t );
+
+		function changeCwd( p ) {
+			fs.exists( p, function( exist ) {
+				if (exist) {
+					lastWD = p;
+					socket.emit( 'cwd', p );
+					sendPathList( lastWD );
+				}
+				else {
+					socket.emit( 'feedback', 'did not change dir\n' );
+				}
+			} );
+		}
 
 		function getCwd( cwd, data ) {
 			if (typeof cwd === 'undefined') { 
