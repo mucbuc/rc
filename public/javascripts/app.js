@@ -4,8 +4,6 @@ function MainCtrl( $scope )
 	  , emitter = new EventStream()
 	  , element = document.getElementById( 'command' )
 	  , cl = new CommandLine( element, emitter )
-	  , history = []
-	  , searchIndex = 0
 	  , autoComplete
 	  , pathList = []
 	  , serverIP = ''
@@ -31,8 +29,6 @@ function MainCtrl( $scope )
 	// need to test these 
 	emitter.on( 'auto', function( command ) { console.log( 'auto:', command ); } );
 	emitter.on( 'eval', function( command ) { console.log( 'eval:', command ); } );
-	emitter.on( 'previous', function() { console.log( 'previous' ); } );
-	emitter.on( 'next', function() { console.log( 'next' ); } );
 
 	cl.on( 'Ctrl+c', function() { 
 		$scope.kill();
@@ -45,7 +41,6 @@ function MainCtrl( $scope )
 	element.addEventListener( 
 		'textInput', 
 		function() { 
-			searchIndex = 0;
 			autoComplete = null;
 		}
 	); 
@@ -57,21 +52,8 @@ function MainCtrl( $scope )
 
 	emitter.on( 'eval', function( command ) {
 		$scope.evaluate(command);
-		searchIndex = 0;
 		autoComplete = null;
 	});
-
-	emitter.on( 'previous', function() {
-		if (searchIndex < history.length) {
-			applyHistory( ++searchIndex );
-		}
-	} );
-
-	emitter.on( 'next', function() {
-		if (searchIndex > 0) {
-			applyHistory( --searchIndex ); 
-		}
-	} );
 
 	emitter.on( 'auto', function( command ) {
 		
@@ -140,11 +122,6 @@ function MainCtrl( $scope )
 		$scope.$apply();
 	}
 
-	function applyHistory( index ) {
-		$scope.command = history[ history.length - index ];
-		$scope.$apply();
-	}
-
 	$scope.appendPath = function( path ) {
 		var com = document.getElementById( 'command' );
 		com.focus();
@@ -172,7 +149,6 @@ function MainCtrl( $scope )
 		}
 		$scope.output += $scope.address + '$' + ' ' + $scope.command + '\n';
 		$scope.output += $scope.address + ' => time: ' + getTime() + '\n';
-		history.push( $scope.command );
 		$scope.command = '';
 		
 		$scope.kill = function() {

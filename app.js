@@ -210,19 +210,4 @@ server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-getLocalIP(); 
-
-function getLocalIP() {
-	var interfaces = os.networkInterfaces();  
-	for( var iface in interfaces) {
-		interfaces[ iface ].forEach( function( details ) { 
-			if (details.family=='IPv4') {
-				var address = details.address;
-				if (address != '127.0.0.1') {
-					localIP = address;	
-				}
-			}
-		} );
-	}
-}
-
+js3.Network.getLocalIP( function( ip ) { localIP = ip; } ); 
