@@ -17,7 +17,6 @@ var express = require('express')
   , exec = js3.exec
   , walk = js3.walk
   , os = require( 'os' )
-  , localIP = ''
   , lastWD = '';
 
 var app = express();
@@ -49,10 +48,12 @@ io.sockets.on( 'connection', function( socket ) {
 
 	var cwd = process.cwd();
 
-	sendLocalIP();
-
+	js3.Network.getLocalIP( function( ip ) { 
+		socket.emit( 'ip', ip ); 
+	} );
+	
 	socket.emit( 'cwd', cwd );
-	sendList( cwd );
+	sendPathList( cwd );
 
 	socket.on( 'cd', function( cwd, data ) {
 		
@@ -61,7 +62,7 @@ io.sockets.on( 'connection', function( socket ) {
 			if (exist) {
 				socket.emit( 'cwd', result );
 				lastWD = result;
-				sendList( result );
+				sendPathList( result );
 			}
 			else {
 				socket.emit( 'feedback', 'did not change dir\n' );
@@ -70,15 +71,15 @@ io.sockets.on( 'connection', function( socket ) {
 
 		function getCwd( cwd, data ) {
 			if (typeof cwd === 'undefined') { 
-				return process.cwd();
+				return process.cwd();			//root
 			}
 			else if (data == '/') {
-				return '/';
+				return '/';						//relative
 			}
 			else if (data == '\\') {
-				return '\\'; 
+				return '\\'; 					//relative
 			}
-			return path.join( cwd, data );
+			return path.join( cwd, data );		//absolute
 		}
 	
 	} );
@@ -99,7 +100,7 @@ io.sockets.on( 'connection', function( socket ) {
 				fs.writeFile( p, data, function(err) {
 					check( err );
 					socket.emit( 'feedback', 'upload complete: ' + p + '\n' ); 
-					sendList( lastWD );
+					sendPathList( lastWD );
 				} );
 			
 				function check(err) {
@@ -145,7 +146,7 @@ io.sockets.on( 'connection', function( socket ) {
 
 	} );
 
-	function sendList( dir ) {
+	function sendPathList( dir ) {
 
 		var pathList = [];
 
@@ -200,14 +201,8 @@ io.sockets.on( 'connection', function( socket ) {
 			p.stdin.write( data + '\n' );
 		}
  	}
-
- 	function sendLocalIP() {
- 		socket.emit( 'ip', localIP );
- 	}
 } );
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
-
-js3.Network.getLocalIP( function( ip ) { localIP = ip; } ); 
