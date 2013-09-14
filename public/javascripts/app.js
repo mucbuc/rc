@@ -32,10 +32,6 @@ function MainCtrl( $scope )
 	$scope.command = ''; 
 	$scope.address = '';
 
-	// need to test these 
-	emitter.on( 'auto', function( command ) { console.log( 'auto:', command ); } );
-	emitter.on( 'eval', function( command ) { console.log( 'eval:', command ); } );
-
 	cl.on( 'Ctrl+c', function() { 
 		$scope.kill();
 	} );
@@ -68,7 +64,7 @@ function MainCtrl( $scope )
 			}
 		}
 
-		if (autoComplete) {
+		if (autoComplete && autoComplete.options.length) {
 			++autoComplete.index;
 			autoComplete.index %= autoComplete.options.length;
 
@@ -84,7 +80,7 @@ function MainCtrl( $scope )
 			autoComplete = initAutoComplete( command );
 		}
 
-		if (autoComplete) {
+		if (autoComplete && autoComplete.options.length) {
 			if (autoComplete.index) {
 				--autoComplete.index;
 			}
