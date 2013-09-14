@@ -6,7 +6,6 @@
 
 var express = require('express')
   , routes = require('./routes')
-  , user = require('./routes/user')
   , http = require('http')
   , Logic = require( './lib/logic.js' ).Logic;
 
@@ -29,7 +28,6 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
-app.get('/users', user.list);
 
 server = http.createServer(app);
 
