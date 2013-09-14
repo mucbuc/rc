@@ -8,16 +8,6 @@ var express = require('express')
   , routes = require('./routes')
   , user = require('./routes/user')
   , http = require('http')
-  , path = require('path')
-  , js3 = require( 'mucbuc-jsthree' )
-  , socketio = require( 'socket.io' )
-  , fs = require( 'fs' )
-  , io
-  , server
-  , exec = js3.exec
-  , walk = js3.walk
-  , os = require( 'os' )
-  , lastWD = ''
   , Logic = require( './lib/logic.js' ).Logic;
 
 var app = express();
