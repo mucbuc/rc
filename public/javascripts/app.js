@@ -22,6 +22,7 @@ function MainCtrl( $scope )
 
 	socket.on( 'disconnect', function() {
 		$scope.output += '<' + getTime() + '> connection lost\n';
+		$scope.address = '';
 		$scope.$apply();		
 	} );
 

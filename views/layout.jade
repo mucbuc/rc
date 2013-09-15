@@ -14,8 +14,7 @@ body
     div(ng-controller="MainCtrl")
         form(ng-submit='evaluate(command)')
         pre 
-           {{output}}
-           {{address}} 
+           {{output}}{{address}} 
         textarea(ng-model='command', id='command', rows='1', cols = '50', autocomplete='off')
         form(action='/', method='POST', enctype='multipart/form-data')
             input(type='file', multiple='', id='fileSelection', name='displayImage', style='display: none') 
