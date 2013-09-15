@@ -21,7 +21,7 @@ function MainCtrl( $scope )
 	$scope.kill = function() {};
 
 	socket.on( 'disconnect', function() {
-		$scope.output += $scope.address + ' <' + getTime() + '> connection lost\n';
+		$scope.output += '<' + getTime() + '> connection lost\n';
 		$scope.$apply();		
 	} );
 
@@ -144,7 +144,7 @@ function MainCtrl( $scope )
 			}
 		}
 		else {
-			
+
 			socket.emit( 'evaluate', getCWD(), command.trim() );
 			$scope.output += $scope.address + ' <' + getTime() + '> $' + ' ' + $scope.command + '\n';  
 			$scope.kill = function() {
