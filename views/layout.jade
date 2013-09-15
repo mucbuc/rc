@@ -12,16 +12,14 @@ html(ng-app)
     link(rel='stylesheet', href='public/stylesheets/style.css')
 body 
     div(ng-controller="MainCtrl")
-        details(open)
-            summary() {{address}}
-            pre {{output}}
-        div
-            form(ng-submit='evaluate(command)')
-               textarea(ng-model='command', id='command', size = '100%', autocomplete='off')
-            
-            form(action='/', method='POST', enctype='multipart/form-data')
-                input(type='file', multiple='', id='fileSelection', name='displayImage', style='display: none') 
+        form(ng-submit='evaluate(command)')
+        pre 
+           {{output}}
+           {{address}} 
+        textarea(ng-model='command', id='command', rows='1', cols = '50', autocomplete='off')
+        form(action='/', method='POST', enctype='multipart/form-data')
+            input(type='file', multiple='', id='fileSelection', name='displayImage', style='display: none') 
 
-            button(id='upload') upload    
+        button(id='upload') upload    
         
     

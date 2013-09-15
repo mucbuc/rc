@@ -7,7 +7,6 @@ function MainCtrl( $scope )
 	  , autoComplete
 	  , pathList = []
 	  , serverIP = ''
-	  , cwd = ''
 	  , selection = document.getElementById( 'fileSelection' )
 	  , button = document.getElementById( 'upload' );
 
@@ -22,7 +21,7 @@ function MainCtrl( $scope )
 	$scope.kill = function() {};
 
 	socket.on( 'disconnect', function() {
-		$scope.output += 'connection lost\n';
+		$scope.output += $scope.address + ' <' + getTime() + '> connection lost\n';
 		$scope.$apply();		
 	} );
 
@@ -129,6 +128,8 @@ function MainCtrl( $scope )
 	}; 
 
 	$scope.evaluate = function( command ) { 
+
+		var cwd = getCWD();
 		if (command == 'cd') {
 			socket.emit( 'cd' ); 
 		}
@@ -143,18 +144,15 @@ function MainCtrl( $scope )
 			}
 		}
 		else {
-			var com = document.getElementById( 'command' );
-			socket.emit( 'evaluate', cwd, command.trim() );
+			
+			socket.emit( 'evaluate', getCWD(), command.trim() );
+			$scope.output += $scope.address + ' <' + getTime() + '> $' + ' ' + $scope.command + '\n';  
+			$scope.kill = function() {
+				socket.emit( 'kill' );
+				console.log( 'kill' );
+			};
 		}
-		$scope.output += $scope.address + '$' + ' ' + $scope.command + '\n';
-		$scope.output += $scope.address + ' => time: ' + getTime() + '\n';
-		$scope.command = '';
 		
-		$scope.kill = function() {
-			socket.emit( 'kill' );
-			console.log( 'kill' );
-		};
-
 		$scope.$apply();
 	};
 
@@ -169,25 +167,28 @@ function MainCtrl( $scope )
 	} );
 
 	socket.on( 'cwd', function (data) {
-		cwd = data;
-		$scope.address = serverIP + ' ' + cwd;
-		$scope.output += $scope.address + '\n';
+		location.hash = data;
+	} );
+
+	window.addEventListener( 'hashchange', function() {
+		$scope.address = serverIP + ' ' + getCWD();
 		$scope.$apply();
 		allign();
-	} );
+	}, false );
 
 	socket.on( 'ls', function( data ) { 
 		pathList = data;
 	} ); 
 
 	socket.on( 'exit', function( code, signal ) {
+		
 		if (code) {
-			$scope.output += $scope.address + ' => code: ' + code + '\n';
+			$scope.output += 'code: ' + code + '\n';
 		}
 		if (signal) {
-			$scope.output += $scope.address + ' => signal: ' + signal + '\n';
+			$scope.output += 'signal: ' + signal + '\n';
 		}
-		$scope.output += $scope.address + ' => time: ' + getTime() + '\n';
+		$scope.output += '<' + getTime() + '>\n\n';
 		$scope.kill = function() {};
 		$scope.$apply();
 		allign();
@@ -201,5 +202,9 @@ function MainCtrl( $scope )
 	function allign() {
 		var com = document.getElementById( 'command' );
 		com.scrollIntoView();
+	}
+
+	function getCWD() {
+		return location.hash.slice(1);
 	}
 }
