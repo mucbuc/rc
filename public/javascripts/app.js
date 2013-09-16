@@ -147,7 +147,7 @@ function MainCtrl( $scope )
 		else {
 
 			socket.emit( 'evaluate', getCWD(), command.trim() );
-			$scope.output += $scope.address + ' <' + getTime() + '> $' + ' ' + $scope.command + '\n';  
+						
 			$scope.kill = function() {
 				socket.emit( 'kill' );
 				console.log( 'kill' );
@@ -156,6 +156,10 @@ function MainCtrl( $scope )
 		
 		$scope.$apply();
 	};
+
+	socket.on( 'enter', function( command ) {
+		$scope.output += $scope.address + ' <' + getTime() + '> $' + ' ' + command + '\n';  
+	} );
 
 	socket.on( 'ip', function( IP ) {
 		serverIP = IP;
