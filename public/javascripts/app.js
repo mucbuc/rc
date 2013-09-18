@@ -36,16 +36,8 @@ function MainCtrl( $scope )
 		$scope.kill();
 	} );
 
-	cl.on( 'Backspace', function() {
-		autoComplete = null;
-	} ); 
-
-	element.addEventListener( 
-		'textInput', 
-		function() { 
-			autoComplete = null;
-		}
-	); 
+	cl.on( 'Backspace', cancelAutoComplete ); 
+	element.addEventListener( 'textInput', cancelAutoComplete ); 
 
 	tick();
 
@@ -106,6 +98,10 @@ function MainCtrl( $scope )
 		} ); 
 
 		return { index: 0, options: accept, position: ind };
+	}
+
+	function cancelAutoComplete() {
+		autoComplete = null;
 	}
 
 	function tick() {
