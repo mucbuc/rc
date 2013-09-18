@@ -196,8 +196,14 @@ function MainCtrl( $scope )
 	} );
 
 	function getTime() {
-		var t = new Date();
-		return t.getHours() + ':' + t.getMinutes() + ':' + t.getSeconds(); 
+		var t = new Date()
+		  , h = t.getHours()
+		  , m = t.getMinutes()
+		  , s = t.getSeconds()
+		  , result = h < 10 ? '0' + h : h;
+		result += ':' + (m < 10 ? '0' + m : m);
+		result += ':' + (s < 10 ? '0' + s : s);
+		return result; 
 	}
 
 	function allign() {
