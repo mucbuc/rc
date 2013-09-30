@@ -15,8 +15,8 @@ body
         form(ng-submit='evaluate(command)')
         pre 
            {{output}}{{address}} 
-        textarea(ng-model='command', id='command', rows='1', cols = '50', autocomplete='off')
-        form(action='/', method='POST', enctype='multipart/form-data')
+        textarea(ng-model='command', id='command', rows='2', cols = '80', autocomplete='off')
+        form(method='POST', enctype='multipart/form-data')
             input(type='file', multiple='', id='fileSelection', name='displayImage', style='display: none') 
 
         button(id='upload') upload    

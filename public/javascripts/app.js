@@ -8,13 +8,15 @@ function MainCtrl( $scope )
 	  , pathList = []
 	  , serverIP = ''
 	  , selection = document.getElementById( 'fileSelection' )
-	  , button = document.getElementById( 'upload' );
+	  , button = document.getElementById( 'upload' )
+	  , cwd = ''; 
 
 	selection.onchange = function() {
 		selection.form.submit();
 	};
 
 	button.onclick = function() {
+		selection.form.action = cwd;
 		selection.click();
 	};
 	
@@ -172,7 +174,8 @@ function MainCtrl( $scope )
 	} );
 
 	window.addEventListener( 'hashchange', function() {
-		$scope.address = serverIP + ' ' + getCWD();
+		cwd = getCWD();
+		$scope.address = serverIP + ' ' + cwd;
 		$scope.$apply();
 		allign();
 	}, false );
@@ -214,4 +217,5 @@ function MainCtrl( $scope )
 	function getCWD() {
 		return location.hash.slice(1);
 	}
+
 }
