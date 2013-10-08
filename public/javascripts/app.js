@@ -4,8 +4,6 @@ function MainCtrl( $scope )
 	  , emitter = new EventStream()
 	  , element = document.getElementById( 'command' )
 	  , cl = new CommandLine( element, emitter )
-	  , autoComplete
-	  , pathList = []
 	  , serverIP = ''
 	  , selection = document.getElementById( 'fileSelection' )
 	  , button = document.getElementById( 'upload' )
@@ -38,85 +36,15 @@ function MainCtrl( $scope )
 		$scope.kill();
 	} );
 
-	cl.on( 'Backspace', cancelAutoComplete ); 
-	element.addEventListener( 'textInput', cancelAutoComplete ); 
-
 	tick();
 
 	emitter.on( 'eval', function( command ) {
 		$scope.evaluate(command);
-		autoComplete = null;
 	});
-
-	emitter.on( 'auto', function( command ) {
-		
-		if (!autoComplete && command.length) {
-			autoComplete = initAutoComplete( command );
-
-			if (autoComplete) {
-				autoComplete.index = autoComplete.options.length - 1;
-			}
-		}
-
-		if (autoComplete && autoComplete.options.length) {
-			++autoComplete.index;
-			autoComplete.index %= autoComplete.options.length;
-
-			applyAuto( command );
-		}
-	} );
-
-	emitter.on( 'reverse auto', function( command ) {
-		
-		console.log( 'reverse auto' );
-
-		if (!autoComplete && command.length) {
-			autoComplete = initAutoComplete( command );
-		}
-
-		if (autoComplete && autoComplete.options.length) {
-			if (autoComplete.index) {
-				--autoComplete.index;
-			}
-			else {
-				autoComplete.index = autoComplete.options.length - 1;	
-			}
-
-			applyAuto( command );
-		}
-	} );
-
-	function initAutoComplete( command ) {
-
-		var ind = command.lastIndexOf( ' ' )
-		  , accept = []
-		  , end = command.substr( ind + 1 )
-		  , re = new RegExp( '^' + end, "i" );		// case insensitive
-	
-		pathList.forEach( function( e ) {
-			if (re.test( e )) {
-			  accept.push( e );
-			}
-		} ); 
-
-		return { index: 0, options: accept, position: ind };
-	}
-
-	function cancelAutoComplete() {
-		autoComplete = null;
-	}
 
 	function tick() {
 		emitter.tick();
 		setTimeout( tick, 100 );
-	}
-
-	function applyAuto( command ) {
-		console.log( 'autoComplete.index', autoComplete.index );
-
-		command = command.substr( 0, autoComplete.position );
-		$scope.command = command + ' ' + autoComplete.options[autoComplete.index];
-		$scope.$apply();
 	}
 
 	$scope.appendPath = function( path ) {
@@ -181,7 +109,7 @@ function MainCtrl( $scope )
 	}, false );
 
 	socket.on( 'ls', function( data ) { 
-		pathList = data;
+		cl.registerAutoComplete( data );
 	} ); 
 
 	socket.on( 'exit', function( code, signal ) {
