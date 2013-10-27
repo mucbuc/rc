@@ -9,6 +9,10 @@ function MainCtrl( $scope )
 	  , button = document.getElementById( 'upload' )
 	  , cwd = ''; 
 
+	emitter.on( 'cd', function() {
+		socket.emit( 'ls', element.value );
+	} );
+
 	selection.onchange = function() {
 		selection.form.submit();
 	};
@@ -46,13 +50,6 @@ function MainCtrl( $scope )
 		emitter.tick();
 		setTimeout( tick, 100 );
 	}
-
-	$scope.appendPath = function( path ) {
-		var com = document.getElementById( 'command' );
-		com.focus();
-		$scope.command += ' ' + path + ' ';
-		$scope.path = '';
-	}; 
 
 	$scope.evaluate = function( command ) { 
 
