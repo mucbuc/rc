@@ -7,7 +7,8 @@ function MainCtrl( $scope )
 	  , serverIP = ''
 	  , selection = document.getElementById( 'fileSelection' )
 	  , button = document.getElementById( 'upload' )
-	  , cwd = ''; 
+	  , cwd = ''
+	  , autoStack = [];
 
 	emitter.on( 'cd', function() {
 		socket.emit( 'ls', element.value );
@@ -73,7 +74,6 @@ function MainCtrl( $scope )
 						
 			$scope.kill = function() {
 				socket.emit( 'kill' );
-				console.log( 'kill' );
 			};
 		}
 		
@@ -82,10 +82,15 @@ function MainCtrl( $scope )
 
 	socket.on( 'enter', function( command ) {
 		$scope.output += $scope.address + ' <' + getTime() + '> $' + ' ' + command + '\n';  
+		$scope.$apply();
 	} );
 
 	socket.on( 'ip', function( IP ) {
 		serverIP = IP;
+
+		cwd = getCWD();
+		$scope.address = serverIP + ' ' + cwd;
+		$scope.$apply();
 	} );
 
 	socket.on( 'feedback', function (data) {
@@ -98,14 +103,28 @@ function MainCtrl( $scope )
 		location.hash = data;
 	} );
 
-	window.addEventListener( 'hashchange', function() {
-		cwd = getCWD();
-		$scope.address = serverIP + ' ' + cwd;
-		$scope.$apply();
-		allign();
-	}, false );
+	window.addEventListener( 'load', onRefresh );
+	window.addEventListener( 'hashchange', onRefresh );
 
 	socket.on( 'ls', function( data ) { 
+
+/*
+		var current = cl.getAutoComplete(); 
+		if (current.length) {
+			autoStack.push( current );
+		}
+
+		cl.on( ' ', function() {
+
+			if (autoStack.length) {
+				cl.registerAutoComplete( autoStack[0] );
+				while(autoStack.length) {
+					autoStack.pop();
+				}
+			}
+		});
+*/
+
 		cl.registerAutoComplete( data );
 	} ); 
 
@@ -122,6 +141,13 @@ function MainCtrl( $scope )
 		$scope.$apply();
 		allign();
 	} );
+
+	function onRefresh() {
+		cwd = getCWD();
+		$scope.address = serverIP + ' ' + cwd;
+		$scope.$apply();
+		allign();
+	}
 
 	function getTime() {
 		var t = new Date()
