@@ -7,8 +7,7 @@ function MainCtrl( $scope )
 	  , serverIP = ''
 	  , selection = document.getElementById( 'fileSelection' )
 	  , button = document.getElementById( 'upload' )
-	  , cwd = ''
-	  , autoStack = [];
+	  , cwd = '';
 
 	emitter.on( 'cd', function() {
 		socket.emit( 'ls', element.value );
@@ -31,6 +30,9 @@ function MainCtrl( $scope )
 		$scope.$apply();		
 	} );
 
+	socket.on( 'macros', function(data) {
+		cl.macros = data; 
+	});
 
 	$scope.socket = socket;
 	$scope.output = ''; 
