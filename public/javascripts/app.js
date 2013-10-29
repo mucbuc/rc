@@ -22,8 +22,7 @@ function MainCtrl( $scope )
 		selection.click();
 	};
 	
-	$scope.kill = function() {};
-
+	
 	socket.on( 'disconnect', function() {
 		$scope.output += '<' + getTime() + '> connection lost\n';
 		$scope.address = '';
@@ -39,6 +38,10 @@ function MainCtrl( $scope )
 	$scope.command = ''; 
 	$scope.address = '';
 
+	$scope.kill = function() {
+		socket.emit( 'kill' );
+	};
+
 	cl.on( 'Ctrl+c', function() { 
 		$scope.kill();
 	} );
@@ -49,37 +52,8 @@ function MainCtrl( $scope )
 		$scope.evaluate(command);
 	});
 
-	function tick() {
-		emitter.tick();
-		setTimeout( tick, 100 );
-	}
-
 	$scope.evaluate = function( command ) { 
-
-		var cwd = getCWD();
-		if (command == 'cd') {
-			socket.emit( 'cd' ); 
-		}
-		else if (command.indexOf( 'cd ') == 0) {
-			var arg = command.substr( 3 ).trim();
-			if (	arg[0] == '/' 
-				|| 	arg.indexOf( ':' ) != -1) {
-				socket.emit( 'cd', arg ); 					// absolute
-			}
-			else {
-				socket.emit( 'cd', cwd, arg ); 			// relative
-			}
-		}
-		else {
-
-			socket.emit( 'evaluate', getCWD(), command.trim() );
-						
-			$scope.kill = function() {
-				socket.emit( 'kill' );
-			};
-		}
-		
-		$scope.$apply();
+		socket.emit( 'evaluate', getCWD(), command.trim() );
 	};
 
 	socket.on( 'enter', function( command ) {
@@ -139,10 +113,14 @@ function MainCtrl( $scope )
 			$scope.output += 'signal: ' + signal + '\n';
 		}
 		$scope.output += '<' + getTime() + '>\n\n';
-		$scope.kill = function() {};
 		$scope.$apply();
 		allign();
 	} );
+
+	function tick() {
+		emitter.tick();
+		setTimeout( tick, 100 );
+	}
 
 	function onRefresh() {
 		cwd = getCWD();

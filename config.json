@@ -1,4 +1,3 @@
 {
-	"include": [ "ls" ],
-	"exclude": []
+	"include": [".*"] 
 }
