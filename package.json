@@ -11,6 +11,5 @@
     "mucbuc-jsthree": "*",
     "command-line": "*",
     "socket.io": "*",
-    "keyboard": "*"
   }
 }
