@@ -6,7 +6,7 @@ html(ng-app)
     script(src='public/javascripts/angular.min.js') 
     script(src='node_modules/mucbuc-jsbag/lib/set.js')
     script(src='node_modules/mucbuc-jsbag/lib/eventstream.js')
-    script(src='node_modules/command-line/node_modules/keyboard/keyboard.js')
+    script(src='node_modules/command-line/node_modules/keyboard/Keyboard.js')
     script(src='node_modules/command-line/lib/cle.js')
     script(src='public/javascripts/app.js') 
     link(rel='stylesheet', href='public/stylesheets/style.css')
@@ -15,7 +15,7 @@ body
         form(ng-submit='evaluate(command)')
         pre 
            {{output}}{{address}} 
-        textarea(ng-model='command', id='command', rows='2', cols = '80', autocomplete='off')
+        textarea(ng-model='command', id='command', rows='2', cols='80', autocomplete='off')
         form(method='POST', enctype='multipart/form-data')
             input(type='file', multiple='', id='fileSelection', name='displayImage', style='display: none') 
 
