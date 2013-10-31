@@ -7,7 +7,8 @@
 var express = require('express')
   , routes = require('./routes')
   , http = require('http')
-  , Logic = require( './lib/logic.js' ).Logic;
+  , Logic = require( './lib/logic.js' ).Logic
+  , upload = require( './routes/upload' ).upload;
 
 var app = express();
 
@@ -29,10 +30,12 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 
+app.post('/*', upload );
+
 server = http.createServer(app);
 
 server.listen(app.get('port'), function(){
   console.log('Express server listening on port ' + app.get('port'));
 });
 
-Logic.init( server, app );
+Logic.init( server );

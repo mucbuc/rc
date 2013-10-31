@@ -22,8 +22,7 @@ function MainCtrl( $scope )
 		selection.form.action = cwd;
 		selection.click();
 	};
-	
-	
+		
 	socket.on( 'disconnect', function() {
 		$scope.output += '<' + getTime() + '> connection lost\n';
 		$scope.address = '';
