@@ -7,7 +7,8 @@ function MainCtrl( $scope )
 	  , serverIP = ''
 	  , selection = document.getElementById( 'fileSelection' )
 	  , button = document.getElementById( 'upload' )
-	  , cwd = '';
+	  , cwd = ''
+	  , getTime = getTimeHHMMSS;
 
 	emitter.on( 'cd', function() {
 		socket.emit( 'ls', element.value );
@@ -127,17 +128,6 @@ function MainCtrl( $scope )
 		$scope.address = serverIP + ' ' + cwd;
 		$scope.$apply();
 		allign();
-	}
-
-	function getTime() {
-		var t = new Date()
-		  , h = t.getHours()
-		  , m = t.getMinutes()
-		  , s = t.getSeconds()
-		  , result = h < 10 ? '0' + h : h;
-		result += ':' + (m < 10 ? '0' + m : m);
-		result += ':' + (s < 10 ? '0' + s : s);
-		return result; 
 	}
 
 	function allign() {
