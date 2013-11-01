@@ -14,21 +14,35 @@ function testCD() {
 	  , passedCount = 0;
 
 	process.on( 'exit', function() {
-		console.log( passedCount );
-		assert( passedCount >= 2 );
+		assert( passedCount >= 3);
 		console.log( 'cd_agent test passed' );
 	});
 
-	e.on( 'cwd', function(path) { 
+	// test cd
+	e.once( 'cwd', function(path) { 
 		assert( path == __dirname );
 		++passedCount;
 	});
-
-	e.on( 'ls', function(list) {
+	e.once( 'ls', function(list) {
 		assert( list.indexOf( 'test.js' ) != -1 );
 	});
-
 	agent.process( ['cd'] );
-	agent.process( ['cd', '~'] );
+
+	// test cd ~
+	e.once( 'cwd', function(path) { 
+		assert( path == __dirname );
+		++passedCount;
+	});
+	e.once( 'ls', function(list) {
+		assert( list.indexOf( 'test.js' ) != -1 );
+	});
+	agent.process( ['cd', '~'] ); 
+	
+	// test cd /
+	e.once( 'cwd', function(path) {
+		assert( path == '/' );
+		++passedCount;	
+	});
+	agent.process( ['cd', '/'] );
 }
 
