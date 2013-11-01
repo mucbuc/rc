@@ -19,30 +19,29 @@ function testCD() {
 	});
 
 	// test cd
-	e.once( 'cwd', function(path) { 
-		assert( path == __dirname );
-		++passedCount;
-	});
-	e.once( 'ls', function(list) {
-		assert( list.indexOf( 'test.js' ) != -1 );
-	});
+	expectCWD();
 	agent.process( ['cd'] );
 
 	// test cd ~
-	e.once( 'cwd', function(path) { 
-		assert( path == __dirname );
-		++passedCount;
-	});
-	e.once( 'ls', function(list) {
-		assert( list.indexOf( 'test.js' ) != -1 );
-	});
+	expectCWD();
 	agent.process( ['cd', '~'] ); 
 	
 	// test cd /
-	e.once( 'cwd', function(path) {
-		assert( path == '/' );
-		++passedCount;	
-	});
+	expectPath( '/' );
 	agent.process( ['cd', '/'] );
+
+	function expectPath(expected) {	
+		e.once( 'cwd', function(path) { 
+			assert( path == expected );
+			++passedCount;
+		});
+	}
+	
+	function expectCWD() {	
+		expectPath(__dirname );
+		e.once( 'ls', function(list) {
+			assert( list.indexOf( 'test.js' ) != -1 );
+		});
+	}
 }
 
