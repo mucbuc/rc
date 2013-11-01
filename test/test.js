@@ -11,16 +11,17 @@ testCD();
 function testCD() {
 	var e = new events.EventEmitter()
 	  , agent = new CD_Agent( e )
-	  , passed = false;
+	  , passedCount = 0;
 
 	process.on( 'exit', function() {
-		assert( passed == true );
+		console.log( passedCount );
+		assert( passedCount >= 2 );
 		console.log( 'cd_agent test passed' );
 	});
 
 	e.on( 'cwd', function(path) { 
 		assert( path == __dirname );
-		passed = true;
+		++passedCount;
 	});
 
 	e.on( 'ls', function(list) {
@@ -28,5 +29,6 @@ function testCD() {
 	});
 
 	agent.process( ['cd'] );
+	agent.process( ['cd', '~'] );
 }
 

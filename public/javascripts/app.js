@@ -10,10 +10,6 @@ function MainCtrl( $scope )
 	  , cwd = ''
 	  , getTime = getTimeHHMMSS;
 
-	emitter.on( 'cd', function() {
-		socket.emit( 'ls', element.value );
-	} );
-
 	selection.onchange = function() {
 		selection.form.submit();
 	};
