@@ -34,12 +34,8 @@ function MainCtrl( $scope )
 	$scope.command = ''; 
 	$scope.address = '';
 
-	$scope.kill = function() {
-		socket.emit( 'kill' );
-	};
-
 	cl.on( 'Ctrl+c', function() { 
-		$scope.kill();
+		socket.emit( 'kill' );
 	} );
 
 	emitter.on( 'cd', function() {
@@ -57,10 +53,7 @@ function MainCtrl( $scope )
 
 	$scope.evaluate = function( command ) { 
 		
-		socket.once( 'cwd', function (data) {
-			cwd = data;
-			location.hash = data;
-		} );
+		socket.once( 'cwd', setCWD );
 
 		cwd = getCWD();
 		socket.emit( 'evaluate', cwd, command.trim() );
@@ -73,10 +66,7 @@ function MainCtrl( $scope )
 
 	socket.on( 'ip', function( IP ) {
 		serverIP = IP;
-
-		cwd = getCWD();
-		$scope.address = serverIP + ' ' + cwd;
-		$scope.$apply();
+		onRefresh();
 	} );
 
 	socket.on( 'feedback', function (data) {
@@ -85,37 +75,15 @@ function MainCtrl( $scope )
 		allign();
 	} );
 
-	socket.once( 'cwd', function (data) {
-		cwd = data;
-		location.hash = data;
-	} );
-
-	window.addEventListener( 'load', onRefresh );
-	window.addEventListener( 'hashchange', onRefresh );
+	socket.once( 'cwd', setCWD );
 
 	socket.on( 'ls', function( data ) { 
-
-/*
-		var current = cl.getAutoComplete(); 
-		if (current.length) {
-			autoStack.push( current );
-		}
-
-		cl.on( ' ', function() {
-
-			if (autoStack.length) {
-				cl.registerAutoComplete( autoStack[0] );
-				while(autoStack.length) {
-					autoStack.pop();
-				}
-			}
-		});
-*/
-
 		cl.registerAutoComplete( data );
 	} ); 
 
 	socket.on( 'exit', function( code, signal ) {
+
+		socket.removeListener( 'cwd', setCWD );
 		
 		if (code) {
 			$scope.output += 'code: ' + code + '\n';
@@ -127,6 +95,9 @@ function MainCtrl( $scope )
 		$scope.$apply();
 		allign();
 	} );
+
+	window.addEventListener( 'load', onRefresh );
+	window.addEventListener( 'hashchange', onRefresh );
 
 	function tick() {
 		emitter.tick();
@@ -143,6 +114,11 @@ function MainCtrl( $scope )
 	function allign() {
 		var com = document.getElementById( 'command' );
 		com.scrollIntoView();
+	}
+
+	function setCWD( d ) {
+		cwd = d;
+		location.hash = d;
 	}
 
 	function getCWD() {
