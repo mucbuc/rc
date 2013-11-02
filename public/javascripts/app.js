@@ -43,7 +43,6 @@ function MainCtrl( $scope )
 	} );
 
 	emitter.on( 'cd', function() {
-		
 		var ind = element.value.lastIndexOf( ' ' )
 		  , end = element.value.substr( ind + 1 );
 
