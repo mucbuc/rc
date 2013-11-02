@@ -8,7 +8,8 @@ function MainCtrl( $scope )
 	  , cl = new CommandLine( element, emitter )
 	  , getTime = getTimeHHMMSS
 	  , serverIP = ''
-	  , cwd = '';
+	  , cwd = ''
+	  , dirtyLS = false;
 
 	selection.onchange = function() {
 		selection.form.submit();
@@ -43,7 +44,15 @@ function MainCtrl( $scope )
 		  , end = element.value.substr( ind + 1 );
 
 		socket.emit( 'ls', cwd, end ); 
+		dirtyLS = true;
 	}); 
+
+	cl.on( 'Space', function() {
+		if (dirtyLS) {
+			socket.emit( 'ls', cwd, '' );
+			dirtyLS = false;
+		}
+	});
 
 	tick();
 
@@ -52,9 +61,8 @@ function MainCtrl( $scope )
 	});
 
 	$scope.evaluate = function( command ) { 
-		
+		dirtyLS = false;
 		socket.once( 'cwd', setCWD );
-
 		cwd = getCWD();
 		socket.emit( 'evaluate', cwd, command.trim() );
 	};
