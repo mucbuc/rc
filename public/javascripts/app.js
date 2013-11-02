@@ -1,14 +1,14 @@
 function MainCtrl( $scope )
 {
 	var socket = io.connect()
-	  , emitter = new EventStream()
 	  , element = document.getElementById( 'command' )
-	  , cl = new CommandLine( element, emitter )
-	  , serverIP = ''
 	  , selection = document.getElementById( 'fileSelection' )
 	  , button = document.getElementById( 'upload' )
-	  , cwd = ''
-	  , getTime = getTimeHHMMSS;
+	  , emitter = new EventStream()
+	  , cl = new CommandLine( element, emitter )
+	  , getTime = getTimeHHMMSS
+	  , serverIP = ''
+	  , cwd = '';
 
 	selection.onchange = function() {
 		selection.form.submit();
@@ -42,6 +42,14 @@ function MainCtrl( $scope )
 		$scope.kill();
 	} );
 
+	emitter.on( 'cd', function() {
+		
+		var ind = element.value.lastIndexOf( ' ' )
+		  , end = element.value.substr( ind + 1 );
+
+		socket.emit( 'ls', cwd, end ); 
+	}); 
+
 	tick();
 
 	emitter.on( 'eval', function( command ) {
@@ -49,7 +57,14 @@ function MainCtrl( $scope )
 	});
 
 	$scope.evaluate = function( command ) { 
-		socket.emit( 'evaluate', getCWD(), command.trim() );
+		
+		socket.once( 'cwd', function (data) {
+			cwd = data;
+			location.hash = data;
+		} );
+
+		cwd = getCWD();
+		socket.emit( 'evaluate', cwd, command.trim() );
 	};
 
 	socket.on( 'enter', function( command ) {
@@ -71,7 +86,8 @@ function MainCtrl( $scope )
 		allign();
 	} );
 
-	socket.on( 'cwd', function (data) {
+	socket.once( 'cwd', function (data) {
+		cwd = data;
 		location.hash = data;
 	} );
 
