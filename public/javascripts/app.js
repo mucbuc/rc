@@ -9,7 +9,7 @@ function MainCtrl( $scope )
 	  , getTime = getTimeHHMMSS
 	  , serverIP = ''
 	  , cwd = ''
-	  , dirtyLS = false;
+	  , dirtyLS = true;
 
 	selection.onchange = function() {
 		selection.form.submit();
