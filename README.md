@@ -12,8 +12,14 @@ install
 
 connect
 --
-linux/mac: open http://localhost:3000  
-windows: start http://localhost:3000
+
+linux/mac  
+
+    open http://localhost:3000  
+    
+Windows
+  
+    start http://localhost:3000  
 
 basic authentication
 --
@@ -26,8 +32,8 @@ enable file upload by setting 'upload' true in config.json
 
 macro substitution
 --
-1. add macros key/values inside macros.json  
-2. restart server  
+1. add macro key/values inside macros.json  
+2. restart server if running
 3. type the key word and press right arrow  
 
 shortcuts 
