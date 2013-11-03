@@ -1,3 +1,6 @@
 {
-	"include": [".*"] 
+	"sandbox": ["ls", "cd", "./test.js"], 
+	"upload": false,
+	"username": "",
+	"password": ""
 }

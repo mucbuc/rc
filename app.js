@@ -7,8 +7,12 @@
 var express = require('express')
   , routes = require('./routes')
   , http = require('http')
+  , assert = require( 'assert' )
   , Logic = require( './lib/logic.js' ).Logic
-  , upload = require( './routes/upload' ).upload;
+  , upload = require( './routes/upload' ).upload
+  , config = require( './config.json' );
+
+assert( typeof config !== 'undefined' );
 
 var app = express();
 
@@ -20,6 +24,11 @@ app.use(express.favicon());
 app.use(express.logger('dev'));
 app.use(express.bodyParser());
 app.use(express.methodOverride());
+
+if (config.username.length || config.password.length) {
+	app.use(express.basicAuth( config.username, config.password ));
+}
+
 app.use(app.router);
 app.use(express.static(__dirname));
 
@@ -30,7 +39,9 @@ if ('development' == app.get('env')) {
 
 app.get('/', routes.index);
 
-app.post('/*', upload );
+if (config.upload) {
+	app.post('/*', upload );
+}
 
 server = http.createServer(app);
 
