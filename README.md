@@ -1,7 +1,7 @@
 rc
 ==
 
-remote console
+remote console using node.js
 
 install
 --
@@ -9,6 +9,11 @@ install
     cd rc  
     npm install  
     node app.js  
+
+connect
+--
+linux/mac: open http://localhost:3000
+windows: start http://localhost:3000
 
 basic authentication
 --
