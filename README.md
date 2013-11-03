@@ -17,7 +17,7 @@ set 'username' and 'password' values in rc/config.json
 sandboxing
 --
 * enable commands by adding to the 'sandbox' array in rc/config.json  
-* enable file uplad by setting 'upload' true in config.json  
+* enable file upload by setting 'upload' true in config.json  
 
 macro substitution
 --
@@ -34,7 +34,7 @@ shortcuts
 
 file upload
 --
-* enable file uplad by setting 'upload' true in config.json  
+* enable file upload by setting 'upload' true in config.json  
 * the file will be uploaded to the current working directory   
 
 todo
