@@ -12,7 +12,7 @@ install
 
 connect
 --
-linux/mac: open http://localhost:3000
+linux/mac: open http://localhost:3000  
 windows: start http://localhost:3000
 
 basic authentication
@@ -21,8 +21,8 @@ set 'username' and 'password' values in rc/config.json
 
 sandboxing
 --
-* enable commands by adding to the 'sandbox' array in rc/config.json  
-* enable file upload by setting 'upload' true in config.json  
+enable commands by adding to the 'sandbox' array in rc/config.json  
+enable file upload by setting 'upload' true in config.json  
 
 macro substitution
 --
@@ -32,15 +32,15 @@ macro substitution
 
 shortcuts 
 --
-* Tab       => auto complete similar to console on Windows  
-* Up/Down   => traverse command history  
-* Back/Forward (browser) => traverse path history
-* Ctrl+c    => kill current process
+Tab       => auto complete similar to console on Windows  
+Up/Down   => traverse command history  
+Back/Forward (browser) => traverse path history  
+Ctrl+c    => kill current process
 
 file upload
 --
-* enable file upload by setting 'upload' true in config.json  
-* the file will be uploaded to the current working directory   
+the file will be uploaded to the current working directory   
+enable file upload by setting 'upload' true in config.json  
 
 todo
 --
