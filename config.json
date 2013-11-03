@@ -1,6 +1,6 @@
 {
-	"sandbox": ["ls", "cd", "./test.js"], 
-	"upload": false,
+	"sandbox": [".*"], 
+	"upload": true,
 	"username": "",
 	"password": ""
 }
