@@ -1,11 +1,11 @@
 {
   "name": "mucbuc-rc",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "scripts": {
     "start": "node app.js"
   },
   "dependencies": {
-    "express": "3.2.0",
+    "express": "*",
     "jade": "*",
     "mucbuc-jsbag": "*",
     "mucbuc-jsthree": "*",
