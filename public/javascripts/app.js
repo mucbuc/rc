@@ -4,7 +4,7 @@ function MainCtrl( $scope )
 	  , element = document.getElementById( 'command' )
 	  , selection = document.getElementById( 'fileSelection' )
 	  , button = document.getElementById( 'upload' )
-	  , emitter = new EventStream()
+	  , emitter = new Stream()
 	  , cl = new CommandLine( element, emitter )
 	  , getTime = getTimeHHMMSS
 	  , serverIP = ''
@@ -53,8 +53,6 @@ function MainCtrl( $scope )
 			dirtyLS = false;
 		}
 	});
-
-	tick();
 
 	emitter.on( 'eval', function( command ) {
 		$scope.evaluate(command);
@@ -106,11 +104,6 @@ function MainCtrl( $scope )
 
 	window.addEventListener( 'load', onRefresh );
 	window.addEventListener( 'hashchange', onRefresh );
-
-	function tick() {
-		emitter.tick();
-		setTimeout( tick, 100 );
-	}
 
 	function onRefresh() {
 		cwd = getCWD();

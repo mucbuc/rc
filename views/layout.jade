@@ -1,11 +1,13 @@
-doctype 5
+doctype html
 html(ng-app)
   head
     script var exports = window;
     script(src='socket.io/socket.io.js')
     script(src='public/javascripts/angular.min.js') 
-    script(src='node_modules/mucbuc-jsbag/lib/set.js')
-    script(src='node_modules/mucbuc-jsbag/lib/eventstream.js')
+    script(src='node_modules/mucbuc-events/src/batch.js')
+    script(src='node_modules/mucbuc-events/src/queue.js')
+    script(src='node_modules/mucbuc-events/src/emitter.js')
+    script(src='node_modules/mucbuc-events/src/stream.js')
     script(src='node_modules/mucbuc-jsbag/lib/core.js')
     script(src='node_modules/command-line/node_modules/keyboard/Keyboard.js')
     script(src='node_modules/command-line/lib/cle.js')

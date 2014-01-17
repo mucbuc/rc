@@ -10,6 +10,7 @@
     "mucbuc-jsbag": "*",
     "mucbuc-jsthree": "*",
     "command-line": "*",
-    "socket.io": "*"
+    "socket.io": "*",
+    "mucbuc-events":"*"
   }
 }
