@@ -1,6 +1,6 @@
 {
   "name": "mucbuc-rc",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "scripts": {
     "start": "node app.js"
   },
@@ -11,6 +11,7 @@
     "mucbuc-jsthree": "*",
     "command-line": "*",
     "socket.io": "*",
-    "mucbuc-events":"*"
+    "mucbuc-events":"*",
+    "serve-favicon":"*"
   }
 }
