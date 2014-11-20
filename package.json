@@ -12,6 +12,7 @@
     "command-line": "*",
     "socket.io": "*",
     "mucbuc-events":"*",
-    "serve-favicon":"*"
+    "serve-favicon":"*",
+    "cd-agent": "*"
   }
 }
