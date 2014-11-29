@@ -5,14 +5,20 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "body-parser": "^1.5.2",
+    "errorhandler": "^1.1.1",
+    "cd-agent": "*",
+    "command-line": "*",
     "express": "*",
     "jade": "*",
+    "method-override": "*",
+    "micro-box": "*",
+    "morgan": "^1.5.0",
+    "mucbuc-events": "*",
     "mucbuc-jsbag": "*",
     "mucbuc-jsthree": "*",
-    "command-line": "*",
+    "serve-favicon": "*",
     "socket.io": "*",
-    "mucbuc-events":"*",
-    "serve-favicon":"*",
-    "cd-agent": "*"
+    "multer": "*"
   }
 }
