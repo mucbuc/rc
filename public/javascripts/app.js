@@ -5,7 +5,7 @@ function MainCtrl( $scope )
 	  , selection = document.getElementById( 'fileSelection' )
 	  , button = document.getElementById( 'upload' )
 	  , emitter = new Stream()
-	  , cl = new CommandLine( element, emitter )
+	  , cl = new CommandLine( element, emitter, OnTab )
 	  , getTime = getTimeHHMMSS
 	  , serverIP = ''
 	  , cwd = ''
