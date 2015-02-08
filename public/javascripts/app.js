@@ -75,8 +75,14 @@ function MainCtrl( $scope )
 		onRefresh();
 	} );
 
-	socket.on( 'feedback', function (data) {
+	socket.on( 'feedback', function(data) {
 		$scope.output += data;
+		$scope.$apply();
+		allign();
+	} );
+
+	socket.on( 'stdout data', function(data) {
+		$scope.output += data.toString();
 		$scope.$apply();
 		allign();
 	} );
